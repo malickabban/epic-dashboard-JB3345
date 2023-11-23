@@ -1,14 +1,33 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Dashboard: React.FC = () => {
   const patients = ['Patient A', 'Patient B', 'Patient C'];
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
 
-  const getRandomLetters = () => {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return Array.from({ length: 5 }, () => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
-  };
+  const [data, setData] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/getData', {
+          headers : {
+            "Content-Type" : "application/json",
+          }
+        });
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+    // const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // return Array.from({ length: 5 }, () => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
+  
 
   return (
     <div className="dashboard-container">
@@ -28,7 +47,8 @@ const Dashboard: React.FC = () => {
         {selectedPatient ? (
           <div>
             <p>Patient: {selectedPatient}</p>
-            <p>Random Information: {getRandomLetters()}</p>
+            {data && (
+        <pre>{JSON.stringify(data, null, 2)}</pre>)}
           </div>
         ) : (
           <p>Select a patient from the list</p>
