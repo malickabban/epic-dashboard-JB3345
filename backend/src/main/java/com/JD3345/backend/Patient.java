@@ -6,9 +6,22 @@ import java.util.HashMap;
 
 public class Patient {
     //private String[] usualName, officialName, maidenName; 
-    private HashMap<String,String> names; // Different names defined in the patient file
-    private int preferred; //index of preferred name
+    private String name; // Different names defined in the patient file
+    private String address; //index of preferred name
 
     private boolean active, deceased;
+
+    public Patient(String name, String address){
+        this.name = name;
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
 
 }

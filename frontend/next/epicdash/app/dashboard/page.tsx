@@ -1,108 +1,112 @@
 "use client"
 import { useState, useEffect } from 'react';
+import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
+
+type Patient = {
+  // Define the structure of your JSON data here
+  // For example:
+  name: string;
+  address: string;
+  // Add more properties as needed
+};
+type PatientMap = Record<string, Patient>;
 
 const Dashboard: React.FC = () => {
   const patients = ['Patient A', 'Patient B', 'Patient C'];
-  const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  
+  const [data, setData] = useState<PatientMap | null>(null);
+  const [jsonKeys, setJsonKeys] = useState<Array<string> | null>(null);
+  const [displayedPatients, setDisplayedPatients] = useState<Array<string> | null>(null);
 
-  const [data, setData] = useState<any | null>(null);
+
+
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/getData', {
-          headers : {
-            "Content-Type" : "application/json",
-          }
-        });
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/getPatients', {
+        headers : {
+          "Content-Type" : "application/json",
+        }
+      });
+      const result = await response.json();
+      setData(result);
+      if (result) {
+        setJsonKeys(Object.keys(result));
+        setDisplayedPatients(Object.keys(result))
       }
-    };
 
-    fetchData();
-  }, []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
-    // const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    // return Array.from({ length: 5 }, () => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
-  
+  fetchData();
 
-  return (
-    <div className="dashboard-container">
-      <div className="type-list">
-        <h3>Patients</h3>
-        <ul>
-          {patients.map((patient) => (
-            <li key={patient} onClick={() => setSelectedPatient(patient)}>
-              {patient}
-            </li>
-          ))}
-        </ul>
-      </div>
+}, []);
 
-      <div className="information-box">
-        <h3>Information Box</h3>
-        {selectedPatient ? (
+const handleButtonClick = (key: string) => {
+  if(data){
+  setSelectedPatient(data[key]);
+}
+};
+
+const handleRemovePatient = () => {
+  if(displayedPatients && data){
+  const temp = displayedPatients;
+  temp.length = temp.length-1;
+  setDisplayedPatients(temp);
+  setSelectedPatient(null);
+}
+
+};
+
+const handleAddPatient = () => {
+  if(displayedPatients && jsonKeys && displayedPatients.length < jsonKeys.length){
+    const temp = displayedPatients;
+    temp.length = temp.length+1;
+    temp[temp.length-1] = jsonKeys[temp.length-1];
+    setDisplayedPatients(temp);
+    setSelectedPatient(null);
+}
+};
+
+
+
+ // Handle the removal of the bottom-most patient
+ 
+
+// Your raw data, keys, and selected patient can now be used in the return statement
+return (
+  <div className="container-fluid">
+    <h1>Epic Dashboard</h1>
+    <div className="list-group">
+      <div>
+        {displayedPatients && (
+          <ul>
+            {displayedPatients.map((key) => (
+              <li key={key}>
+                <button onClick={() => handleButtonClick(key)}>{key}</button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        </div>
+        <div className="information-box">
+        {selectedPatient && (
           <div>
-            <p>Patient: {selectedPatient}</p>
-            {data && (
-        <pre>{JSON.stringify(data, null, 2)}</pre>)}
+            <h2>Selected Patient</h2>
+            <p>Name: {selectedPatient.name}</p>
+            <p>Address: {selectedPatient.address}</p>
           </div>
-        ) : (
-          <p>Select a patient from the list</p>
         )}
       </div>
-
-      <style jsx>{`
-        .dashboard-container {
-          display: flex;
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-
-        .type-list {
-          flex: 1;
-          padding-right: 20px;
-        }
-
-        .type-list h3 {
-          color: #333;
-        }
-
-        ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        li {
-          cursor: pointer;
-          margin-bottom: 10px;
-          padding: 8px;
-          background-color: #f0f0f0;
-          border-radius: 4px;
-        }
-
-        li:hover {
-          background-color: #e0e0e0;
-        }
-
-        .information-box {
-          flex: 2;
-          padding-left: 20px;
-          border-left: 1px solid #ccc;
-        }
-
-        .information-box h3 {
-          color: #333;
-        }
-
-        .information-box p {
-          margin-bottom: 10px;
-        }
-      `}</style>
+    </div>
+    <button type="button" className="btn btn-danger" onClick ={handleRemovePatient}>Remove Bottom Patient</button>
+        <button type="button" className="btn btn-success" onClick={ handleAddPatient}>Add Patient</button>
     </div>
   );
 };
