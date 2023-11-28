@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
+import Search from "./components/Search";
 
 type Patient = {
   // Define the structure of your JSON data here
@@ -88,6 +89,9 @@ const Dashboard: React.FC = () => {
         <div className="col-md-4">
           <div className="list-group">
             <div>
+              <Search />
+            </div>
+            <div>
               {displayedPatients && (
                 <ul>
                   {displayedPatients.map((key) => (
@@ -108,14 +112,16 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 py-5">
           {selectedPatient && (
             <div>
               <p>Name: {selectedPatient.name}</p>
               <p>Address: {selectedPatient.address}</p>
+              
             </div>
           )}
         </div>
+
       </div>
       <div className="row">
         <div className="dropdown">
