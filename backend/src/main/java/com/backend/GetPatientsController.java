@@ -1,0 +1,130 @@
+package com.backend;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Organization;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.instance.model.api.IIdType;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.HashMap;
+
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
+public class GetPatientsController {
+
+
+    @GetMapping("/getPatients")
+    public Map<String, Object> getData() throws IOException {
+
+
+        FhirContext ctx = FhirContext.forR4Cached();
+
+        IGenericClient client = ctx.newRestfulGenericClient("https://hapi.fhir.org/baseR4");
+  
+		
+		// Read a patient with the given ID
+		Patient patient = client.read().resource(Patient.class).withId("example").execute();
+  
+		// Print the output
+		String string = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+		System.out.println(string);
+
+		//The following example shows how to query using the generic client:
+
+		Bundle response = client.search()
+		.forResource(Patient.class)
+		.where(Patient.BIRTHDATE.beforeOrEquals().day("2011-01-01"))
+		.and(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
+				Organization.NAME.matches().value("Smith")))
+		.returnBundle(Bundle.class)
+		.execute();
+
+		String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
+		System.out.println(string2);
+
+        for( Bundle.BundleEntryComponent i : response.getEntry()){
+            Patient person = (Patient) i.getResource();
+            System.out.println("name: " + person.getName().get(0));
+            
+
+          Bundle ressponse =  client.search()
+            .forResource(Practitioner.class)
+            .where(Practitioner.IDENTIFIER.exactly().code(person.getGeneralPractitionerFirstRep().getId())).returnBundle(Bundle.class).execute();
+
+            		String string22 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(ressponse);
+                    		System.out.println(string22);
+
+
+
+
+        }
+
+
+        // System.out.println("YEAH I JUST GOT CALLED");
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // Map<String,Object> map = new HashMap<>();
+
+
+        // Resource resource = new ClassPathResource("patientA.json");
+        // Map<String, Object> data = objectMapper.readValue(resource.getInputStream(), Map.class);
+        // ArrayList<LinkedHashMap> address = (ArrayList) data.get("address");
+        // ArrayList<LinkedHashMap> name = (ArrayList) data.get("name");
+        // Patient patientA = new Patient(formatName(name), address.get(0).get("text").toString());
+        // map.put(patientA.getName(), patientA);
+
+        // resource = new ClassPathResource("patientB.json");
+        // data = objectMapper.readValue(resource.getInputStream(), Map.class);
+        // address = (ArrayList) data.get("address");
+        // name = (ArrayList) data.get("name");
+        // Patient patientB = new Patient(formatName(name), address.get(0).get("text").toString());
+        // map.put(patientB.getName(), patientB);
+
+        // resource = new ClassPathResource("patientC.json");
+        // data = objectMapper.readValue(resource.getInputStream(), Map.class);
+        // address = (ArrayList) data.get("address");
+        // name = (ArrayList) data.get("name");
+        // Patient patientC = new Patient(formatName(name), address.get(0).get("text").toString());
+        // map.put(patientC.getName(), patientC);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+        // System.out.println(address.get(0).get("text"));
+        // System.out.println(formatName(name));
+
+        // System.out.println(map);
+        
+        return null;
+    }
+
+    private String formatName(ArrayList<LinkedHashMap> data) {
+
+        return (data.get(0).get("given").toString()).replaceAll("\\[","").replaceAll("\\]", "").replaceAll(",", "") +" "+  data.get(0).get("family");
+    }
+
+
+}

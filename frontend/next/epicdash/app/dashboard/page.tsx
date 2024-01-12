@@ -13,7 +13,6 @@ type Patient = {
 type PatientMap = Record<string, Patient>;
 
 const Dashboard: React.FC = () => {
-  const patients = ["Patient A", "Patient B", "Patient C"];
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -82,16 +81,18 @@ const Dashboard: React.FC = () => {
 
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
+    
     <div className="container">
+              <h2 id="center">Epic Dashboard </h2>
+
       <div className="row">
-        <h1>Epic Dashboard</h1>
-        <div className="col-md-4">
+        <div className="col-sm-4">
           <div className="list-group">
             <div>
               {displayedPatients && (
                 <ul>
                   {displayedPatients.map((key) => (
-                    <li className="list-group-item" key={key}>
+                    <li className="list-group-item border-left-0" key={key}>
                       <button onClick={() => handleButtonClick(key)}>
                         {key}
                       </button>
@@ -118,6 +119,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
       <div className="row">
+        <div className="col-md-3 .offset-md-3">
         <div className="dropdown">
           <button
             className="btn btn-secondary dropdown-toggle"
@@ -142,6 +144,8 @@ const Dashboard: React.FC = () => {
               )}
           </ul>
         </div>
+        </div>
+
       </div>
     </div>
   );
