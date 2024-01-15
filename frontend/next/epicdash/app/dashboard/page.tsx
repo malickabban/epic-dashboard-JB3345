@@ -75,10 +75,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
+  const [searchValue, setSearchValue] = useState('')
+  const handleSearch = (value: string) => {
+    // search value when Enter is pressed
+    console.log(value)
+    setSearchValue(value)
+  }
   // Handle the removal of the bottom-most patient
 
   // Your raw data, keys, and selected patient can now be used in the return statement
@@ -89,7 +91,9 @@ const Dashboard: React.FC = () => {
         <div className="col-md-4">
           <div className="list-group">
             <div>
-              <Search />
+              <Search onSearch={handleSearch} />
+              <h2 className= {'text-2xl mt-20 mx-2 underline'}> Search history</h2>
+              <p className= {'text-2xl m-2'}> {searchValue}</p>
             </div>
             <div>
               {displayedPatients && (
