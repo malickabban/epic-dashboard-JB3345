@@ -8,7 +8,7 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: black) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
@@ -26,4 +26,24 @@ body {
   color: rgb(var(--foreground-rgb));
   padding: 1rem;
   
+}
+
+.SearchBar {
+  width: 200px;
+  max-width: 100%;
+  position: relative;
+}
+
+.SearchBar input {
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid white;
+  width: 100%;
+}
+
+.SearchBar button {
+  background-color: white;
+  height: 100%;
+  aspect-ratio: 1;
+  position: absolute;
+  right: 0;
 }

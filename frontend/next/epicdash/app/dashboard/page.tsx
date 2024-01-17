@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
+import Search from "./components/Search";
 
 type Patient = {
   // Define the structure of your JSON data here
@@ -73,10 +74,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
+  const [searchValue, setSearchValue] = useState('')
+  const handleSearch = (value: string) => {
+    // search value when Enter is pressed
+    console.log(value)
+    setSearchValue(value)
+  }
   // Handle the removal of the bottom-most patient
 
   // Your raw data, keys, and selected patient can now be used in the return statement
@@ -88,6 +91,11 @@ const Dashboard: React.FC = () => {
       <div className="row">
         <div className="col-sm-4">
           <div className="list-group">
+            <div>
+              <Search onSearch={handleSearch} />
+              <h2 className= {'text-2xl mt-20 mx-2 underline'}> Search history</h2>
+              <p className= {'text-2xl m-2'}> {searchValue}</p>
+            </div>
             <div>
               {displayedPatients && (
                 <ul>
@@ -109,14 +117,16 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 py-5">
           {selectedPatient && (
             <div>
               <p>Name: {selectedPatient.name}</p>
               <p>Address: {selectedPatient.address}</p>
+              
             </div>
           )}
         </div>
+
       </div>
       <div className="row">
         <div className="col-md-3 .offset-md-3">
