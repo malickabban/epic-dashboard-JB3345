@@ -38,6 +38,19 @@ import java.util.HashMap;
 @CrossOrigin(origins = "http://localhost:3000")
 public class GetPatientsController {
 
+    // (malick) This main method is for testing, I put print statements in getData() and run this main method
+    public static void main(String[] args){
+
+        GetPatientsController test = new GetPatientsController();
+       
+        try {
+            test.getData();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+
+    }
 
     @GetMapping("/getPatients")
     public Map<String, Object> getData() throws IOException {
@@ -68,22 +81,27 @@ public class GetPatientsController {
 		String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
 		System.out.println(string2);
 
-        for( Bundle.BundleEntryComponent i : response.getEntry()){
-            Patient person = (Patient) i.getResource();
-            System.out.println("name: " + person.getName().get(0));
+         Map<String,Object> map = new HashMap<>();
+
+         map.put(string2, "thing");
+
+
+        // for( Bundle.BundleEntryComponent i : response.getEntry()){
+        //     Patient person = (Patient) i.getResource();
+        //     System.out.println("name: " + person.getName().get(0));
             
 
-          Bundle ressponse =  client.search()
-            .forResource(Practitioner.class)
-            .where(Practitioner.IDENTIFIER.exactly().code(person.getGeneralPractitionerFirstRep().getId())).returnBundle(Bundle.class).execute();
+        //   Bundle ressponse =  client.search()
+        //     .forResource(Practitioner.class)
+        //     .where(Practitioner.IDENTIFIER.exactly().code(person.getGeneralPractitionerFirstRep().getId())).returnBundle(Bundle.class).execute();
 
-            		String string22 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(ressponse);
-                    		System.out.println(string22);
-
-
+        //     		String string22 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(ressponse);
+        //             		System.out.println(string22);
 
 
-        }
+
+
+        // }
 
 
         // System.out.println("YEAH I JUST GOT CALLED");
@@ -118,7 +136,7 @@ public class GetPatientsController {
 
         // System.out.println(map);
         
-        return null;
+        return map;
     }
 
     private String formatName(ArrayList<LinkedHashMap> data) {
