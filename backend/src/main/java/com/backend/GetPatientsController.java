@@ -6,9 +6,11 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Organization;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,36 +26,41 @@ import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
 
-@RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000")
+//@RestController
+//@RequestMapping("/api")
+//@CrossOrigin(origins = "http://localhost:3000")
+@Component
 public class GetPatientsController {
 
     // (malick) This main method is for testing, I put print statements in getData() and run this main method
-    public static void main(String[] args){
+    //public static void main(String[] args){
 
-        GetPatientsController test = new GetPatientsController();
+        //GetPatientsController test = new GetPatientsController();
        
-        try {
-            test.getData();
-        } catch (Exception e) {
+       // try {
+            //test.getData();
+       // } catch (Exception e) {
             // TODO: handle exception
-        }
+       // }
 
 
-    }
+    //}
 
     @GetMapping("/getPatients")
-    public Map<String, Object> getData() throws IOException {
+    public List<Protopatient.Patient> getData() throws IOException {
+
+        
 
 
         FhirContext ctx = FhirContext.forR4Cached();
@@ -62,11 +69,11 @@ public class GetPatientsController {
   
 		
 		// Read a patient with the given ID
-		Patient patient = client.read().resource(Patient.class).withId("example").execute();
+		//Patient patient = client.read().resource(Patient.class).withId("example").execute();
   
 		// Print the output
-		String string = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
-		System.out.println(string);
+		//String string = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+		//System.out.println(string);
 
 		//The following example shows how to query using the generic client:
 
@@ -77,13 +84,41 @@ public class GetPatientsController {
 				Organization.NAME.matches().value("Smith")))
 		.returnBundle(Bundle.class)
 		.execute();
+        //String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
+        List<com.backend.Protopatient.Patient> protoPatients = new ArrayList<>();
+        //List<String> patientNames = new ArrayList<>();
+        for (BundleEntryComponent entry : response.getEntry()) {
+            // Retrieve the patient resource from each entry
+            IBaseResource resource = entry.getResource();
 
-		String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
-		System.out.println(string2);
+            // Check if the resource is of type Patient
+            if (resource instanceof Patient) {
+                Patient current_patient = (Patient) resource;
 
-         Map<String,Object> map = new HashMap<>();
+                // Access the name property
+                //String familyName = patient.getNameFirstRep().getFamily();
+                //String givenName = patient.getNameFirstRep().getGivenAsSingleString();
 
-         map.put(string2, "thing");
+                // Concatenate family name and given name to get the full name
+                //String fullName = givenName + " " + familyName;
+
+                com.backend.Protopatient.Patient protoPatient = com.backend.Protopatient.Patient.newBuilder()
+                            .setName(current_patient.getNameFirstRep().getNameAsSingleString())
+                            // Add other fields as needed
+                            .build();
+
+                protoPatients.add(protoPatient);
+            }
+
+        }
+        return protoPatients;
+    }
+		
+		//System.out.println(string2);
+
+         //Map<String,Object> map = new HashMap<>();
+
+         //map.put(string2, "thing");
 
 
         // for( Bundle.BundleEntryComponent i : response.getEntry()){
@@ -136,13 +171,13 @@ public class GetPatientsController {
 
         // System.out.println(map);
         
-        return map;
-    }
+        //return map;
+    //}
 
-    private String formatName(ArrayList<LinkedHashMap> data) {
+    //private String formatName(ArrayList<LinkedHashMap> data) {
 
-        return (data.get(0).get("given").toString()).replaceAll("\\[","").replaceAll("\\]", "").replaceAll(",", "") +" "+  data.get(0).get("family");
-    }
+        //return (data.get(0).get("given").toString()).replaceAll("\\[","").replaceAll("\\]", "").replaceAll(",", "") +" "+  data.get(0).get("family");
+   // }
 
 
 }

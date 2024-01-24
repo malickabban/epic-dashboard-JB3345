@@ -1,53 +1,52 @@
 syntax = "proto3";
 
 
-
 // This is where we define what our frontend and backend will agree on what a "patient" is
 // It is based off the fields present in the HAPI FHIR 
 // https://hapifhir.io/hapi-fhir/apidocs/hapi-fhir-structures-r4/org/hl7/fhir/r4/model/Patient.html
-message Patient {
+message ProtoPatient {
 
     // Patients should have a name
     optional string name = 1;
 
     // Patients should have an age
-    optional int32 age = 2;
+    //optional int32 age = 2;
 
     // Patients will have a medical id related to them
-    optional int64 patient_id = 3;
+    //optional int64 patient_id = 3;
 
     // Patients will have a boolean related to if they are alive or dead
-    optional bool deceased = 4;
+    //optional bool deceased = 4;
 
     // Name of patients doctor
-    optional string general_practitioner = 5;
+    //optional string general_practitioner = 5;
 
     // TODO: expand on this
-    optional repeated Diagnoses diagnoses = 6;
+    //optional repeated Diagnoses diagnoses = 6;
 
     // TODO: expand on this
-    optional Healthmetrics metrics = 7;
+    //optional Healthmetrics metrics = 7;
     
     // TODO: expand on this
-    optional Scores scores = 8;
+    //optional Scores scores = 8;
 
 }
 
-message Diagnoses {
+//message Diagnoses {
 
-    optional repeated string diseases = 1; 
+    //optional repeated string diseases = 1; 
 
-}
+//}
 
-message Healthmetrics {
+//message Healthmetrics {
 
-    optional int32 bmi = 1;
+    //optional int32 bmi = 1;
 
-}
+//}
 
-message Scores {
+//message Scores {
 
-    optional int32 CHADSVASc = 1;
+    //optional int32 CHADSVASc = 1;
 
-}
+//}
 
