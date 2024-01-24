@@ -21,22 +21,8 @@ import org.hl7.fhir.instance.model.api.IIdType;
 public class BackendApplication {
 
 	public static void main(String[] args) {
-
 		FhirContext ctx = FhirContext.forR4Cached();
-
-
-		//RequestContextHolder.setRequestAttributes(new ContextAttribute(ctx));
-
-
 		SpringApplication.run(BackendApplication.class, args);
-
-
-
-		// Create a client
-		
-
-	
-
 	}
 
 }

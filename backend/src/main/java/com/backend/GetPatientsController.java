@@ -1,5 +1,6 @@
 package com.backend;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -58,7 +59,7 @@ public class GetPatientsController {
     //}
 
     @GetMapping("/getPatients")
-    public List<Protopatient.Patient> getData() throws IOException {
+    public List<com.backend.Patient> getData() throws IOException {
 
         
 
@@ -85,7 +86,7 @@ public class GetPatientsController {
 		.returnBundle(Bundle.class)
 		.execute();
         //String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
-        List<com.backend.Protopatient.Patient> protoPatients = new ArrayList<>();
+        List<com.backend.Patient> protoPatients = new ArrayList<>();
         //List<String> patientNames = new ArrayList<>();
         for (BundleEntryComponent entry : response.getEntry()) {
             // Retrieve the patient resource from each entry
@@ -102,11 +103,7 @@ public class GetPatientsController {
                 // Concatenate family name and given name to get the full name
                 //String fullName = givenName + " " + familyName;
 
-                com.backend.Protopatient.Patient protoPatient = com.backend.Protopatient.Patient.newBuilder()
-                            .setName(current_patient.getNameFirstRep().getNameAsSingleString())
-                            // Add other fields as needed
-                            .build();
-
+                com.backend.Patient protoPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
                 protoPatients.add(protoPatient);
             }
 

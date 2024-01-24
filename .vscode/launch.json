@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PatientController",
+            "request": "launch",
+            "mainClass": "com.backend.PatientController",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
             "name": "GetPatientsController",
             "request": "launch",
             "mainClass": "com.backend.GetPatientsController",
