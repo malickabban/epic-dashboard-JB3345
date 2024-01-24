@@ -1,27 +1,54 @@
 package com.backend;
-import java.util.HashMap;
-
-//https://build.fhir.org/patient-example.html as an example of the
-//types of .json files we will be parsing
 
 public class Patient {
-    //private String[] usualName, officialName, maidenName; 
-    private String name; // Different names defined in the patient file
-    private String address; //index of preferred name
 
-    private boolean active, deceased;
+    private String name, general_practitioner;
+    private int patient_id;
+    private boolean deceased;
 
-    public Patient(String name, String address){
+    public Patient(String name){
         this.name = name;
-        this.address = address;
     }
 
-    public String getName() {
+    // Getter methods
+    public String getName(){
         return name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getGeneralPractitioner(){
+        return general_practitioner;
     }
 
+    public int getPatientID(){
+        return patient_id;
+    }
+
+    public boolean isDeceased(){
+        return deceased;
+    }
+
+
+    // Setter methods
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGeneralPractitioner(String general_practitioner) {
+        this.general_practitioner = general_practitioner;
+    }
+
+    public void setPatientId(int patient_id) {
+        this.patient_id = patient_id;
+    }
+
+    public void setDeceased(boolean deceased) {
+        this.deceased = deceased;
+    }
 }
+
+
+
+
+
+    
+
