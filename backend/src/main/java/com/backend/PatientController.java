@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PatientController {
 
+    // This main method exists for debugging purposes
     public static void main(String[] args){
         try {
             PatientController pat = new PatientController();
@@ -31,16 +32,16 @@ public class PatientController {
     @Autowired
     private GetPatientsController getPatientsController;
 
-    @GetMapping("/patients")
+    @GetMapping("/getPatients")
     @ResponseBody
     public String getPatients() {
-
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // Get Proto messages from backend
+            //ObjectMapper turns patients into a string that resembles json
+            ObjectMapper objectMapper = new ObjectMapper();
             getPatientsController = new GetPatientsController();
             List<com.backend.Patient> patients = getPatientsController.getData();
             return objectMapper.writeValueAsString(patients);
+
         } catch (IOException e) {
             e.printStackTrace();
             return "error";
