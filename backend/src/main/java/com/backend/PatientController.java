@@ -28,7 +28,7 @@ public class PatientController {
             System.out.println(pat.getPatients());
         } catch (Exception e) {
             // TODO: handle exception
-            System.out.println("GLHJIKGK");
+            System.out.println("Exception in PatientController main");
         }
     }
     @Autowired

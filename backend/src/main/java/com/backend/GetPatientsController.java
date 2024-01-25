@@ -86,7 +86,7 @@ public class GetPatientsController {
 		.returnBundle(Bundle.class)
 		.execute();
         //String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
-        HashMap<String, com.backend.Patient> protoPatients = new HashMap<>();
+        HashMap<String, com.backend.Patient> patientsMap = new HashMap<>();
         //List<String> patientNames = new ArrayList<>();
         for (BundleEntryComponent entry : response.getEntry()) {
             // Retrieve the patient resource from each entry
@@ -103,13 +103,13 @@ public class GetPatientsController {
                 // Concatenate family name and given name to get the full name
                 //String fullName = givenName + " " + familyName;
 
-                com.backend.Patient protoPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
-                protoPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
-                protoPatients.put(protoPatient.getPatientID(),protoPatient);
+                com.backend.Patient newPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
+                newPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
+                patientsMap.put(newPatient.getPatientID(),newPatient);
             }
 
         }
-        return protoPatients;
+        return patientsMap;
     }
 		
 		//System.out.println(string2);
