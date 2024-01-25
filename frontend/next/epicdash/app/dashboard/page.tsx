@@ -7,11 +7,13 @@ import Search from "./components/Search";
 type Patient = {
   // Define the structure of your JSON data here
   // For example:
+  deceased: boolean;
+  generalPracticioner: string | null;
   name: string;
-  address: string;
+  patientID: number;
   // Add more properties as needed
 };
-type PatientMap = Record<string, Patient>;
+type PatientMap = Record<number, Patient>;
 
 const Dashboard: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -22,32 +24,11 @@ const Dashboard: React.FC = () => {
   const [jsonKeys, setJsonKeys] = useState<Array<string> | null>(null);
   const [displayedPatients, setDisplayedPatients] =
     useState<Array<string> | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/getPatients", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
-        setData(result);
-        if (result) {
-          setJsonKeys(Object.keys(result));
-          setDisplayedPatients(Object.keys(result).splice(0,jsonKeys?.length));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  const [names, setNames] =  useState<Array<string> | null>(null);
+  const [originalPatients, setOriginalPatients] =  useState<Array<string> | null>(null);
   const handleButtonClick = (key: string) => {
     if (data) {
-      setSelectedPatient(data[key]);
+      
     }
   };
 
@@ -58,27 +39,62 @@ const Dashboard: React.FC = () => {
       setSelectedPatient(null);
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/getPatients", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const result = await response.json();
+        if (result) {
+          const thing:PatientMap = {};
+          setJsonKeys(Object.keys(result));
+          setDisplayedPatients(Object.keys(result).splice(0,jsonKeys?.length));
+          const arr = []
+          for (let index = 0; index < result.length; index++) {
+            arr.push(result[index].name);
+            const t:Patient = {
+              deceased: result[index].deceased,
+              generalPracticioner: result[index].generalPracticioner,
+              name: result[index].name,
+              patientID: result[index].patinetID
+            };
+            thing[index] = t;
+          }
+          setData(thing); 
+          setNames(arr);
+          setOriginalPatients(arr);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  const handleAddPatient = (key: string) => {
-    if (
-      displayedPatients &&
-      jsonKeys &&
-      displayedPatients.length < jsonKeys.length &&
-      displayedPatients.indexOf(key) == -1
-    ) {
-      const temp = [...displayedPatients];
-      temp.length = temp.length + 1;
-      temp[temp.length - 1] = key;
-      setDisplayedPatients(temp);
-      setSelectedPatient(null);
-    }
-  };
+    fetchData();
+  }, []);
 
   const [searchValue, setSearchValue] = useState('')
   const handleSearch = (value: string) => {
     // search value when Enter is pressed
-    console.log(value)
     setSearchValue(value)
+  }
+  useEffect(() => {
+    if (searchValue === "") {
+      setNames(originalPatients);
+    } else {
+      const thing = originalPatients?.filter(((el) => el.toLowerCase().includes(searchValue.toLowerCase())));
+      setNames(thing || null);
+    }
+  },[searchValue]);
+  const handleAddPatient = (key: string) => {
+    if (displayedPatients && originalPatients && originalPatients.includes(key) && !displayedPatients.includes(key)) {
+      const temp = [...displayedPatients];
+      temp.length = temp.length + 1;
+      temp[temp.length - 1] = key;
+      setDisplayedPatients(temp);
+    }
   }
   // Handle the removal of the bottom-most patient
 
@@ -87,14 +103,11 @@ const Dashboard: React.FC = () => {
     
     <div className="container">
               <h2 id="center">Epic Dashboard </h2>
-
       <div className="row">
         <div className="col-sm-4">
           <div className="list-group">
             <div>
-              <Search onSearch={handleSearch} />
-              <h2 className= {'text-2xl mt-20 mx-2 underline'}> Search history</h2>
-              <p className= {'text-2xl m-2'}> {searchValue}</p>
+              <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient} />
             </div>
             <div>
               {displayedPatients && (
@@ -121,7 +134,7 @@ const Dashboard: React.FC = () => {
           {selectedPatient && (
             <div>
               <p>Name: {selectedPatient.name}</p>
-              <p>Address: {selectedPatient.address}</p>
+              <p>Address: {}</p>
               
             </div>
           )}
@@ -130,30 +143,6 @@ const Dashboard: React.FC = () => {
       </div>
       <div className="row">
         <div className="col-md-3 .offset-md-3">
-        <div className="dropdown">
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Add Patient
-          </button>
-          <ul className="dropdown-menu">
-          {jsonKeys && (
-                <ul>
-                  {jsonKeys.map((key) => (
-                    <li className="dropdown-item" key={key}>
-                      <button onClick={() => handleAddPatient(key)}>
-                        {key}
-                      </button>
-                      
-                    </li>
-                  ))}
-                </ul>
-              )}
-          </ul>
-        </div>
         </div>
 
       </div>
