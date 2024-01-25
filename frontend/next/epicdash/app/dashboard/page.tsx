@@ -24,11 +24,17 @@ const Dashboard: React.FC = () => {
   const [jsonKeys, setJsonKeys] = useState<Array<string> | null>(null);
   const [displayedPatients, setDisplayedPatients] =
     useState<Array<string> | null>(null);
-  const [names, setNames] =  useState<Array<string> | null>(null);
-  const [originalPatients, setOriginalPatients] =  useState<Array<string> | null>(null);
-  const handleButtonClick = (key: string) => {
+  const [names, setNames] =  useState<Array<string> | null>(null); //For names of patients
+  const [originalPatients, setOriginalPatients] =  useState<Array<string> | null>(null); //Names of patients before any filtering
+  const handleButtonClick = (name: string) => {
     if (data) {
-      
+      // This is because of multiple patients with same name; switch to patientID later?
+      for (const key in data) {
+        if (data[key].name === name) {
+          setSelectedPatient(data[key]);
+          break;
+        }
+      }
     }
   };
 
@@ -49,10 +55,12 @@ const Dashboard: React.FC = () => {
         });
         const result = await response.json();
         if (result) {
+          console.log(result);
           const thing:PatientMap = {};
           setJsonKeys(Object.keys(result));
           setDisplayedPatients(Object.keys(result).splice(0,jsonKeys?.length));
           const arr = []
+          //Manually doing this because Java object from backend was not automatically converting.
           for (let index = 0; index < result.length; index++) {
             arr.push(result[index].name);
             const t:Patient = {
@@ -81,6 +89,7 @@ const Dashboard: React.FC = () => {
     setSearchValue(value)
   }
   useEffect(() => {
+    //Change search dropdown while searching
     if (searchValue === "") {
       setNames(originalPatients);
     } else {
@@ -107,8 +116,9 @@ const Dashboard: React.FC = () => {
         <div className="col-sm-4">
           <div className="list-group">
             <div>
-              <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient} />
+              <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient} setSearch={setSearchValue}/>
             </div>
+            <h4>Patients</h4>
             <div>
               {displayedPatients && (
                 <ul>
@@ -131,11 +141,12 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className="col-md-3 py-5">
+          <h4>Basic Information</h4>
           {selectedPatient && (
             <div>
               <p>Name: {selectedPatient.name}</p>
-              <p>Address: {}</p>
-              
+              <p>Deceased: {selectedPatient.deceased ? "Yes" : "No"}</p>
+              <p>General Practitioner: {selectedPatient.generalPracticioner}</p>
             </div>
           )}
         </div>

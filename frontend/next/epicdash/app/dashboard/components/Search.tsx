@@ -8,17 +8,19 @@ export type SearchInput = {
   onSearch: (value: string) => void
   names: Array<string> | null
   onAdd: (value: string) => void
+  setSearch: (value: string) => void
 }
 const Search = (input: SearchInput) => {
-  const {onSearch, names, onAdd} = input
+  const {onSearch, names, onAdd, setSearch} = input
   const placeholderSearchInput = 'Search Patient' // text in the background search bar
   const [text, setText] = useState('')
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key == 'Enter') {
-      // search function
+      // Adding to the displayed patients
       onAdd(text)
       console.log(text)
     } else {
+      // search function for constant updating
       onSearch(text);
     }
   }
@@ -29,7 +31,10 @@ const Search = (input: SearchInput) => {
         name= {'search'}
         value={text}
         placeholder={placeholderSearchInput}
-        onChange={e => setText(e.target.value)} // allows to type into search bar
+        onChange={e => {
+          setText(e.target.value)
+          setSearch(e.target.value)
+        }} // allows to type into search bar as well as constant updating of search
         onKeyDown={handleKeyDown}
         className='flex-1 rounded-md border-0 py-1.5 pl-5 pr-1.5 text-gray-900 ring-1 ring-inset ring-gray-30 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6'
         data-bs-toggle="dropdown"
@@ -51,7 +56,7 @@ const Search = (input: SearchInput) => {
             type="button"
             onClick={() => {
               onAdd(text)
-            }}
+            }} //Adds patient to displayed patient
             style={{ position: 'absolute', left: '203px', top: '50%', transform: 'translateY(-50%)' }}
             >
               <PlusIcon 
