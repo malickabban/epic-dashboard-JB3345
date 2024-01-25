@@ -4,47 +4,50 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
 import Search from "./components/Search";
 
-type Patient = {
+export type Patient = {
   // Define the structure of your JSON data here
   // For example:
   deceased: boolean;
   generalPracticioner: string | null;
   name: string;
-  patientID: number;
   // Add more properties as needed
 };
-type PatientMap = Record<number, Patient>;
+export type PatientMap = Record<string, Patient>;
 
 const Dashboard: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [data, setData] = useState<PatientMap | null>(null);
-  const [jsonKeys, setJsonKeys] = useState<Array<string> | null>(null);
+  const [data, setData] = useState<PatientMap | null>({});
   const [displayedPatients, setDisplayedPatients] =
-    useState<Array<string> | null>(null);
-  const [names, setNames] =  useState<Array<string> | null>(null); //For names of patients
-  const [originalPatients, setOriginalPatients] =  useState<Array<string> | null>(null); //Names of patients before any filtering
-  const handleButtonClick = (name: string) => {
-    if (data) {
+    useState<PatientMap | null>(null);
+  const [names, setNames] =  useState<PatientMap | null>(null); //For names of patients
+  const handleButtonClick = (key: string) => {
+    if (displayedPatients) {
       // This is because of multiple patients with same name; switch to patientID later?
-      for (const key in data) {
-        if (data[key].name === name) {
-          setSelectedPatient(data[key]);
-          break;
-        }
-      }
+      setSelectedPatient(displayedPatients[key]);
     }
   };
 
   const handleRemovePatient = (key: string) => {
     if (displayedPatients && data) {
-      const temp = displayedPatients.filter((item) => item !== key);
-      setDisplayedPatients(temp);
+      const thing:PatientMap = {}
+      Object.keys(displayedPatients).map((key2) => thing[key2] = displayedPatients[key2]);
+      delete thing[key];
+      setDisplayedPatients(thing);
       setSelectedPatient(null);
     }
   };
+  const handleAddPatient = (key: string) => {
+    if (displayedPatients && data && data[key] != undefined && displayedPatients[key] == undefined) {
+      const thing:PatientMap = {}
+      Object.keys(displayedPatients).map((key) => thing[key] = displayedPatients[key]);
+      thing[key] = {
+          name: data[key].name,
+          generalPracticioner: data[key].generalPracticioner,
+          deceased: data[key].deceased
+      }
+      setDisplayedPatients(thing);
+    }
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,25 +58,23 @@ const Dashboard: React.FC = () => {
         });
         const result = await response.json();
         if (result) {
-          console.log(result);
-          const thing:PatientMap = {};
-          setJsonKeys(Object.keys(result));
-          setDisplayedPatients(Object.keys(result).splice(0,jsonKeys?.length));
-          const arr = []
+          const thing:PatientMap |null = {};
+          const arr:Array<string> = []
           //Manually doing this because Java object from backend was not automatically converting.
-          for (let index = 0; index < result.length; index++) {
-            arr.push(result[index].name);
+          Object.keys(result).forEach((key) => {
             const t:Patient = {
-              deceased: result[index].deceased,
-              generalPracticioner: result[index].generalPracticioner,
-              name: result[index].name,
-              patientID: result[index].patinetID
+              deceased: result[key].deceased,
+              generalPracticioner: result[key].generalPracticioner,
+              name: result[key].name
             };
-            thing[index] = t;
-          }
-          setData(thing); 
-          setNames(arr);
-          setOriginalPatients(arr);
+            arr.push(result[key].name);
+            if (data) {
+              data[result[key].patientID] = t;
+            }
+          });
+          setData(data);
+          setDisplayedPatients({});
+          setNames(data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -91,41 +92,40 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     //Change search dropdown while searching
     if (searchValue === "") {
-      setNames(originalPatients);
+      setNames(data);
     } else {
-      const thing = originalPatients?.filter(((el) => el.toLowerCase().includes(searchValue.toLowerCase())));
+      const thing:PatientMap = {};
+      if (data) {
+        Object.keys(data).forEach((key) => {
+          if (data[key].name.toLowerCase().includes(searchValue.toLowerCase())) {
+            thing[key] = data[key];
+          }
+        });
+      }
       setNames(thing || null);
     }
   },[searchValue]);
-  const handleAddPatient = (key: string) => {
-    if (displayedPatients && originalPatients && originalPatients.includes(key) && !displayedPatients.includes(key)) {
-      const temp = [...displayedPatients];
-      temp.length = temp.length + 1;
-      temp[temp.length - 1] = key;
-      setDisplayedPatients(temp);
-    }
-  }
   // Handle the removal of the bottom-most patient
 
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
     
     <div className="container">
-              <h2 id="center">Epic Dashboard </h2>
+              <h2 id="center" className="mb-5 mt-3">Epic Dashboard </h2>
       <div className="row">
-        <div className="col-sm-4">
+        <div className="col-md-4">
           <div className="list-group">
-            <div>
-              <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient} setSearch={setSearchValue}/>
+            <div className="mb-4">
+              <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient}/>
             </div>
             <h4>Patients</h4>
             <div>
               {displayedPatients && (
                 <ul>
-                  {displayedPatients.map((key) => (
+                  {Object.keys(displayedPatients).map((key) => (
                     <li className="list-group-item border-left-0" key={key}>
                       <button onClick={() => handleButtonClick(key)}>
-                        {key}
+                        {displayedPatients[key].name}
                       </button>
                       <button
                         type="button"
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-3 py-5">
+        <div className="col-md-3">
           <h4>Basic Information</h4>
           {selectedPatient && (
             <div>
