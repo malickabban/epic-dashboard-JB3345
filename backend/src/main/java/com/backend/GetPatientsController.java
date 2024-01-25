@@ -59,7 +59,7 @@ public class GetPatientsController {
     //}
 
     @GetMapping("/getPatients")
-    public List<com.backend.Patient> getData() throws IOException {
+    public HashMap<String, com.backend.Patient> getData() throws IOException {
 
         
 
@@ -86,7 +86,7 @@ public class GetPatientsController {
 		.returnBundle(Bundle.class)
 		.execute();
         //String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
-        List<com.backend.Patient> protoPatients = new ArrayList<>();
+        HashMap<String, com.backend.Patient> protoPatients = new HashMap<>();
         //List<String> patientNames = new ArrayList<>();
         for (BundleEntryComponent entry : response.getEntry()) {
             // Retrieve the patient resource from each entry
@@ -104,7 +104,8 @@ public class GetPatientsController {
                 //String fullName = givenName + " " + familyName;
 
                 com.backend.Patient protoPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
-                protoPatients.add(protoPatient);
+                protoPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
+                protoPatients.put(protoPatient.getPatientID(),protoPatient);
             }
 
         }
