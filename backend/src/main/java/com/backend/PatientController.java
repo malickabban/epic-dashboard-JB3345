@@ -1,5 +1,6 @@
 package com.backend;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class PatientController {
             System.out.println(pat.getPatients());
         } catch (Exception e) {
             // TODO: handle exception
+            System.out.println("Exception in PatientController main");
         }
     }
     @Autowired
@@ -39,7 +41,7 @@ public class PatientController {
             //ObjectMapper turns patients into a string that resembles json
             ObjectMapper objectMapper = new ObjectMapper();
             getPatientsController = new GetPatientsController();
-            List<com.backend.Patient> patients = getPatientsController.getData();
+            HashMap<String, com.backend.Patient> patients = getPatientsController.getData();
             return objectMapper.writeValueAsString(patients);
 
         } catch (IOException e) {
