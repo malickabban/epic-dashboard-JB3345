@@ -24,11 +24,13 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Reference;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -103,7 +105,37 @@ public class GetPatientsController {
                 // Concatenate family name and given name to get the full name
                 //String fullName = givenName + " " + familyName;
 
+
+
                 com.backend.Patient protoPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
+
+                // Add patient practitioner
+                try {
+                    if (!current_patient.getGeneralPractitioner().isEmpty()) {
+                        String practitionerReference = current_patient.getGeneralPractitionerFirstRep().getReference();
+                        
+                        // Check if the reference format is correct
+                        if (practitionerReference.startsWith("Practitioner/")) {
+                            String practitionerId = practitionerReference.split("/")[1];
+    
+                            Practitioner practitioner = client.read()
+                                                              .resource(Practitioner.class)
+                                                              .withId(practitionerId)
+                                                              .execute();
+    
+                            if (practitioner.hasName()) {
+                                HumanName name = practitioner.getNameFirstRep();
+                                String fullName = name.getGivenAsSingleString() + " " + name.getFamily();
+                                protoPatient.setGeneralPractitioner(fullName);
+                            }
+                        } else {
+                            // Handle incorrect reference format
+                            System.err.println("Incorrect practitioner reference format: " + practitionerReference);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error processing practitioner reference: " + e.getMessage());
+                }
                 protoPatients.add(protoPatient);
             }
 

@@ -1,5 +1,7 @@
 package com.backend;
 
+import java.util.List;
+
 public class Patient {
 
     private String name, general_practitioner;
