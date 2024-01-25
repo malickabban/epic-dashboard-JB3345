@@ -3,7 +3,7 @@ package com.backend;
 public class Patient {
 
     private String name, general_practitioner;
-    private int patient_id;
+    private String patient_id;
     private boolean deceased;
 
     public Patient(String name){
@@ -19,7 +19,7 @@ public class Patient {
         return general_practitioner;
     }
 
-    public int getPatientID(){
+    public String getPatientID(){
         return patient_id;
     }
 
@@ -37,7 +37,7 @@ public class Patient {
         this.general_practitioner = general_practitioner;
     }
 
-    public void setPatientId(int patient_id) {
+    public void setPatientId(String patient_id) {
         this.patient_id = patient_id;
     }
 
