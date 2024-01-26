@@ -10,6 +10,7 @@ export type Patient = {
   deceased: boolean;
   generalPracticioner: string | null;
   name: string;
+  patientID: string;
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
@@ -52,7 +53,8 @@ const Dashboard: React.FC = () => {
       thing[key] = {
           name: data[key].name,
           generalPracticioner: data[key].generalPracticioner,
-          deceased: data[key].deceased
+          deceased: data[key].deceased,
+          patientID: data[key].patientID
       }
       setDisplayedPatients(thing);
     }
@@ -75,7 +77,8 @@ const Dashboard: React.FC = () => {
             const t:Patient = {
               deceased: result[key].deceased,
               generalPracticioner: result[key].generalPracticioner,
-              name: result[key].name
+              name: result[key].name,
+              patientID: result[key].patientID
             };
             arr.push(result[key].name);
             if (data) {
@@ -156,6 +159,7 @@ const Dashboard: React.FC = () => {
               <p className="ml-1">Name: {selectedPatient ? selectedPatient.name : ""}</p>
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
               <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPracticioner : ""}</p>
+              <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
             </div>
         </div>
 
