@@ -24,7 +24,6 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -106,6 +105,7 @@ public class GetPatientsController {
 
                 com.backend.Patient newPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
                 newPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
+<<<<<<< HEAD
                 
                 // Add patient practitioner
                 try {
@@ -135,6 +135,8 @@ public class GetPatientsController {
                     System.err.println("Error processing practitioner reference: " + e.getMessage());
                 }
                 
+=======
+>>>>>>> 117e438ced055df464645f7fd55593a6933a6f12
                 patientsMap.put(newPatient.getPatientID(),newPatient);
             }
 
