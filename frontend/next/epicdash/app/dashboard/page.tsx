@@ -20,10 +20,19 @@ const Dashboard: React.FC = () => {
   const [displayedPatients, setDisplayedPatients] =
     useState<PatientMap | null>(null);
   const [names, setNames] =  useState<PatientMap | null>(null); //For names of patients
+
   const handleButtonClick = (key: string) => {
     if (displayedPatients) {
-      // This is because of multiple patients with same name; switch to patientID later?
       setSelectedPatient(displayedPatients[key]);
+      const next = document.getElementById(key);
+      const prev = document.getElementsByClassName("list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10 active");
+      if (prev && prev[0]) {
+        prev[0].className = "list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10";
+      }
+      if (next) {
+        next.className = next.className + " active";
+      }
+      console.log(next);
     }
   };
 
@@ -58,6 +67,7 @@ const Dashboard: React.FC = () => {
         });
         const result = await response.json();
         if (result) {
+          setDisplayedPatients({});
           const thing:PatientMap |null = {};
           const arr:Array<string> = []
           //Manually doing this because Java object from backend was not automatically converting.
@@ -73,8 +83,8 @@ const Dashboard: React.FC = () => {
             }
           });
           setData(data);
-          setDisplayedPatients({});
           setNames(data);
+          
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -110,20 +120,19 @@ const Dashboard: React.FC = () => {
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
     
-    <div className="container">
-              <h2 id="center" className="mb-5 mt-3">Epic Dashboard </h2>
-      <div className="row">
-        <div className="col-md-4">
-          <div className="list-group">
-            <div className="mb-4">
+    <div className=" grid grid-cols-9 grid-rows-7 gap-4 w-[100%] min-h-screen">
+              <h2 id="center" className="card shadow-md m-0 p-0 col-span-9 justify-content-center">Epic Dashboard </h2>
+        <div className="row-span-6 col-span-2 card shadow-md">
+          <div>
+          <h4 className="mb-3 mt-1 ml-1">Patients</h4>
+            <div className="mb-4 ml-1" >
               <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient}/>
             </div>
-            <h4>Patients</h4>
-            <div>
+            <div className="list-group">
               {displayedPatients && (
-                <ul>
+                <ul className="pl-0">
                   {Object.keys(displayedPatients).map((key) => (
-                    <li className="list-group-item border-left-0" key={key}>
+                    <li className="list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10" id={key} key = {key}>
                       <button onClick={() => handleButtonClick(key)}>
                         {displayedPatients[key].name}
                       </button>
@@ -140,19 +149,18 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <h4>Basic Information</h4>
-          {selectedPatient && (
+        <div className="col-span-4 row-span-3">
+        <div className="col-span card shadow-md hover:shadow-2xl">
+          <h4 className="ml-1 mt-1">Basic Information</h4>
             <div>
-              <p>Name: {selectedPatient.name}</p>
-              <p>Deceased: {selectedPatient.deceased ? "Yes" : "No"}</p>
-              <p>General Practitioner: {selectedPatient.generalPracticioner}</p>
+              <p className="ml-1">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+              <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
+              <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPracticioner : ""}</p>
             </div>
-          )}
         </div>
 
       </div>
-      <div className="row">
+      <div className="row-span-3 col-span-3">
         <div className="col-md-3 .offset-md-3">
         </div>
 

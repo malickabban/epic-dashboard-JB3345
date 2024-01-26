@@ -21,8 +21,8 @@ const Search = (input: SearchInput) => {
         value={text}
         placeholder={placeholderSearchInput}
         onChange={e => {
-          onSearch(e.target.value)
           setText(e.target.value)
+          onSearch(e.target.value)
         }} // allows to type into search bar as well as constant updating of search
         className='flex-1 rounded-md border-0 py-1.5 pl-5 pr-1.5 text-gray-900 ring-1 ring-inset ring-gray-30 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6'
         data-bs-toggle="dropdown"
