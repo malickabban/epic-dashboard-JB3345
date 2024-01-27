@@ -45,10 +45,3 @@ public class Patient {
         this.deceased = deceased;
     }
 }
-
-
-
-
-
-    
-
