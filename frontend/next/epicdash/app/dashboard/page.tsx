@@ -8,9 +8,9 @@ export type Patient = {
   // Define the structure of your JSON data here
   // For example:
   deceased: boolean;
-  generalPracticioner: string | null;
   name: string;
   patientID: string;
+  generalPractitioner: string | null;
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
@@ -52,9 +52,9 @@ const Dashboard: React.FC = () => {
       Object.keys(displayedPatients).map((key) => thing[key] = displayedPatients[key]);
       thing[key] = {
           name: data[key].name,
-          generalPracticioner: data[key].generalPracticioner,
           deceased: data[key].deceased,
-          patientID: data[key].patientID
+          generalPractitioner: data[key].generalPractitioner,
+          patientID: data[key].patientID,
       }
       setDisplayedPatients(thing);
     }
@@ -76,9 +76,9 @@ const Dashboard: React.FC = () => {
           Object.keys(result).forEach((key) => {
             const t:Patient = {
               deceased: result[key].deceased,
-              generalPracticioner: result[key].generalPracticioner,
               name: result[key].name,
-              patientID: result[key].patientID
+              generalPractitioner: result[key].generalPractitioner,
+              patientID: result[key].patientID,
             };
             arr.push(result[key].name);
             if (data) {
@@ -158,7 +158,7 @@ const Dashboard: React.FC = () => {
             <div>
               <p className="ml-1">Name: {selectedPatient ? selectedPatient.name : ""}</p>
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
-              <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPracticioner : ""}</p>
+              <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
               <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
             </div>
         </div>
