@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import './globals.css'
 const Home: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -41,59 +41,6 @@ const Home: React.FC = () => {
         Sign In
       </button>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-
-      <style jsx>{`
-        .signin-container {
-          max-width: 400px;
-          margin: 0 auto;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-          text-align: center;
-          color: #333;
-        }
-
-        .input-group {
-          margin-bottom: 15px;
-        }
-
-        label {
-          display: block;
-          margin-bottom: 5px;
-          color: #333;
-        }
-
-        input {
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          box-sizing: border-box;
-        }
-
-        .signin-button {
-          background-color: #4caf50;
-          color: white;
-          padding: 10px 15px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 16px;
-        }
-
-        .signin-button:hover {
-          background-color: #45a049;
-        }
-
-        .error-message {
-          color: red;
-          margin-top: 10px;
-        }
-      `}</style>
     </div>
   );
 };

@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PatientController",
+            "request": "launch",
+            "mainClass": "com.backend.PatientController",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
+            "name": "GetPatientsController",
+            "request": "launch",
+            "mainClass": "com.backend.GetPatientsController",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BackendApplication<backend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.backend.BackendApplication",
+            "projectName": "backend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
