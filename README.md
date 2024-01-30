@@ -12,7 +12,7 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 * Added the ability to add, remove, and search for patients.
 * Greatly improved the look and usability of the UI.
 
-### Known Bugs
+### Known Issues
 * Various Formatting bugs
 
 
