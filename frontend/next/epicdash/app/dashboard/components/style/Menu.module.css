@@ -5,6 +5,7 @@
     gap: 10px;
     border-radius: 10px;
     color: var(--textSoft);
+    margin: 5px 0px;
   }
   
   .container:hover,

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 interface MenuItem {
     path: string;
-    icon: React.ReactNode; // Adjust the type based on the type of icon you expect
+    icon: React.ReactNode;
     title: string;
   }
   

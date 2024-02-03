@@ -6,6 +6,7 @@ import {
     MdOutlineSettings,
     MdHelpCenter,
     MdLogout,
+    MdHistory,
   } from "react-icons/md";
 import Menu from "./Menu";
 
@@ -21,12 +22,12 @@ const menuItems = [
       ],
     },
     {
-      title: "Analytics",
+      title: "User",
       list: [
         {
-          title: "Calculation",
+          title: "History",
           path: "/dashboard/reports",
-          icon: <MdAnalytics />,
+          icon: <MdHistory />,
         }
       ],
     },
