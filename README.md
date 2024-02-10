@@ -3,6 +3,19 @@
 
 The goal of this project is to create an easy to use, dynamic, and adapative dashboard for doctors that will allow them to better treat their patients by offering easy information retrieval and automating score calculation and notes writing.
 
+# Release Notes
+
+## Version 0.1.0
+
+### Features
+* Patient's name, id, general practicioner, and death status are now displayed.
+* Added the ability to add, remove, and search for patients.
+* Greatly improved the look and usability of the UI.
+
+### Known Issues
+* Various Formatting bugs
+
+
 # Tech Stack and Project Architecture
 
 The project is a web app consisting of a Next.js frontend framework, with code written in Typescript, with Bootstrap and Tailwind css and a Spring Boot java backend.

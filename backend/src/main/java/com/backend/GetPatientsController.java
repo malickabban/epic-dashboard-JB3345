@@ -1,6 +1,7 @@
 package com.backend;
 
 
+import ca.uhn.fhir.rest.gclient.IQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -28,6 +29,8 @@ import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
@@ -106,7 +109,25 @@ public class GetPatientsController {
 
                 com.backend.Patient newPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
                 newPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
-                
+
+                //Loops through patients observations to convert them to a readable string
+                ArrayList<String> observations= new ArrayList<String>();
+                for (Observation o : getObservation(current_patient.getId(), client)){
+                    observations.add(o.getCode().getText());
+                }
+                // If there are observations add them to the patient
+                if (observations.size() != 0) {
+                    newPatient.setObservations((String[]) observations.toArray(new String[observations.size()]));
+                }
+                //Loops through patients conditions to convert them to a readable string
+                ArrayList<String> conditions = new ArrayList<String>();
+                for (Condition c : getCondition(current_patient.getId(), client)){
+                    conditions.add(c.getCode().getText());
+                }
+                // If there are conditions add them to the patient
+                if (conditions.size() != 0) {
+                    newPatient.setConditions((String[]) conditions.toArray(new String[conditions.size()]));
+                }
                 // Add patient practitioner
                 try {
                     if (!current_patient.getGeneralPractitioner().isEmpty()) {
@@ -141,7 +162,31 @@ public class GetPatientsController {
         }
         return patientsMap;
     }
-		
+
+    public List<Observation> getObservation(String patientId, IGenericClient client) {
+        Bundle bundle = client.search().forResource(Observation.class)
+                .where(Observation.PATIENT.hasId(patientId)).returnBundle(Bundle.class).execute();
+        List<Observation> observations = new ArrayList<Observation>();
+        for (BundleEntryComponent entry : bundle.getEntry()) {
+            IBaseResource resource = entry.getResource();
+            if (resource instanceof Observation) {
+                observations.add((Observation) resource);
+            }
+        }
+        return observations;
+    }
+    public List<Condition> getCondition(String patientId, IGenericClient client) {
+        Bundle bundle = client.search().forResource(Condition.class)
+                .where(Observation.PATIENT.hasId(patientId)).returnBundle(Bundle.class).execute();
+        List<Condition> conditions = new ArrayList<Condition>();
+        for (BundleEntryComponent entry : bundle.getEntry()) {
+            IBaseResource resource = entry.getResource();
+            if (resource instanceof Condition) {
+                conditions.add((Condition) resource);
+            }
+        }
+        return conditions;
+    }
 		//System.out.println(string2);
 
          //Map<String,Object> map = new HashMap<>();
