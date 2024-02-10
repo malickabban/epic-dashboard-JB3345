@@ -125,7 +125,7 @@ public class GetPatientsController {
                     conditions.add(c.getCode().getText());
                 }
                 // If there are conditions add them to the patient
-                if (observations.size() != 0) {
+                if (conditions.size() != 0) {
                     newPatient.setConditions((String[]) conditions.toArray(new String[conditions.size()]));
                 }
                 // Add patient practitioner
