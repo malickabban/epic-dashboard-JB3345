@@ -1,9 +1,9 @@
 import Signin from "./SigninForm";
-import styles from "./SigninForm.module.css"
 
+// url will have /login
 const Login = () => {
     return (
-      <div className={styles.container}>
+      <div>
         <Signin/>
       </div>
     );

@@ -2,7 +2,6 @@ import React from "react";
 import styles from "./style/Sidebar.module.css"
 import {
     MdDashboard,
-    MdAnalytics,
     MdOutlineSettings,
     MdHelpCenter,
     MdLogout,
@@ -26,14 +25,9 @@ const menuItems = [
       list: [
         {
           title: "History",
-          path: "/dashboard/reports",
+          path: "/dashboard/history",
           icon: <MdHistory />,
-        }
-      ],
-    },
-    {
-      title: "User",
-      list: [
+        },
         {
           title: "Settings",
           path: "/dashboard/settings",
@@ -49,7 +43,7 @@ const menuItems = [
             path: "/dashboard/logout",
             icon: <MdLogout />,
           }
-      ],
+      ]
     },
   ];
 
@@ -59,6 +53,7 @@ const Sidebar = () => {
             <ul>
                 { menuItems.map(cat => (
                 <li key={cat.title}>
+                <hr/>
                 <span className={styles.cat}>{ cat.title }</span>
                 {cat.list.map((item) => (
                     <Menu item={item} key={item.title} />

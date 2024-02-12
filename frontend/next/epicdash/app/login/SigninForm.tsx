@@ -33,8 +33,15 @@ const Signin = () => {
     setPassword(event.target.value);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSignIn();
+    }
+  };
+
   return (
-    <form action={formAction} className={styles.form}>
+    <form action={formAction} className={styles.form} onKeyDown={handleKeyPress}>
       <h1>Login</h1>
       <input
         type="text"
