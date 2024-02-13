@@ -24,6 +24,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Organization;
@@ -31,14 +32,17 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Condition;
+import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 
 
@@ -81,7 +85,6 @@ public class GetPatientsController {
 		//System.out.println(string);
 
 		//The following example shows how to query using the generic client:
-
 		Bundle response = client.search()
 		.forResource(Patient.class)
 		.where(Patient.BIRTHDATE.beforeOrEquals().day("2011-01-01"))
@@ -128,6 +131,54 @@ public class GetPatientsController {
                 if (conditions.size() != 0) {
                     newPatient.setConditions((String[]) conditions.toArray(new String[conditions.size()]));
                 }
+
+                // Add visit history
+                ArrayList<String> encounterDetails = new ArrayList<>();
+                for (Encounter e : getEncounters(current_patient.getId(), client)) {
+                    StringBuilder encounterInfo = new StringBuilder();
+
+                    // Add encounter date if available
+                    if (e.getPeriod() != null && e.getPeriod().getStart() != null) {
+                        DateTimeType startDate = e.getPeriod().getStartElement();
+                        encounterInfo.append("Date: ").append(startDate.toHumanDisplay());
+                    }
+                    
+                    // Add reason for the encounter if available
+                    if (!e.getReasonCode().isEmpty()) {
+                        String reasons = e.getReasonCode().stream()
+                                        .map(rc -> rc.getCodingFirstRep().getDisplay())
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.joining(", "));
+                        if (!reasons.isEmpty()) {
+                            encounterInfo.append(", Reason: ").append(reasons);
+                        }
+                    }
+                    
+                    // Add primary diagnosis for the encounter if available
+                    if (!e.getDiagnosis().isEmpty()) {
+                        Encounter.DiagnosisComponent diagnosisComponent = e.getDiagnosisFirstRep();
+                        if (diagnosisComponent.getCondition() != null) {
+                            IIdType idType = diagnosisComponent.getCondition().getReferenceElement();
+                            if (idType != null && idType.getResourceType().equals("Condition")) {
+                                Condition condition = client.read().resource(Condition.class).withId(idType.getIdPart()).execute();
+                                if (condition.hasCode()) {
+                                    String diagnosisDisplay = condition.getCode().getCodingFirstRep().getDisplay();
+                                    encounterInfo.append(", Diagnosis: ").append(diagnosisDisplay);
+                                }
+                            }
+                        }
+                    }
+
+                    // Only add to the list if encounterInfo has content
+                    if (encounterInfo.length() > 0) {
+                        encounterDetails.add(encounterInfo.toString());
+                    }
+                }
+                // If there are encounters, add them to the patient
+                if (!encounterDetails.isEmpty()) {
+                    newPatient.setEncounters(encounterDetails.toArray(new String[0]));
+                }
+
                 // Add patient practitioner
                 try {
                     if (!current_patient.getGeneralPractitioner().isEmpty()) {
@@ -174,6 +225,18 @@ public class GetPatientsController {
             }
         }
         return observations;
+    }
+    public List<Encounter> getEncounters(String patientId, IGenericClient client) {
+        Bundle bundle = client.search().forResource(Encounter.class)
+                .where(Encounter.PATIENT.hasId(patientId)).returnBundle(Bundle.class).execute();
+        List<Encounter> encounters = new ArrayList<>();
+        for (BundleEntryComponent entry : bundle.getEntry()) {
+            IBaseResource resource = entry.getResource();
+            if (resource instanceof Encounter) {
+                encounters.add((Encounter) resource);
+            }
+        }
+        return encounters;
     }
     public List<Condition> getCondition(String patientId, IGenericClient client) {
         Bundle bundle = client.search().forResource(Condition.class)
