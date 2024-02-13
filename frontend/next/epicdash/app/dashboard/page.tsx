@@ -11,6 +11,10 @@ export type Patient = {
   name: string;
   patientID: string;
   generalPractitioner: string | null;
+  conditions : string[] | null;
+  observations : string[] | null;
+  encounters : string[] | null;
+
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
@@ -55,6 +59,9 @@ const Dashboard: React.FC = () => {
           deceased: data[key].deceased,
           generalPractitioner: data[key].generalPractitioner,
           patientID: data[key].patientID,
+          conditions: data[key].conditions,
+          observations: data[key].observations,
+          encounters: data[key].encounters,
       }
       setDisplayedPatients(thing);
     }
@@ -160,6 +167,16 @@ const Dashboard: React.FC = () => {
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
               <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
               <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
+            </div>
+         </div>
+
+            <div className="col-span card shadow-md hover:shadow-2xl">
+          <h4 className="ml-2 mt-2">Detailed</h4>
+            <div>
+              <p className="ml-2">Observations: {selectedPatient ? selectedPatient.observations : ""}</p>
+              <p className="ml-2">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
+              <p className="ml-2">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
+              <p className="ml-2">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
             </div>
         </div>
 

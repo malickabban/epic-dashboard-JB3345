@@ -95,6 +95,8 @@ public class GetPatientsController {
         //String string2 = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(response);
         HashMap<String, com.backend.Patient> patientsMap = new HashMap<>();
         //List<String> patientNames = new ArrayList<>();
+        int i = 0;
+
         for (BundleEntryComponent entry : response.getEntry()) {
             // Retrieve the patient resource from each entry
             IBaseResource resource = entry.getResource();
@@ -118,10 +120,13 @@ public class GetPatientsController {
                 for (Observation o : getObservation(current_patient.getId(), client)){
                     observations.add(o.getCode().getText());
                 }
+                
                 // If there are observations add them to the patient
                 if (observations.size() != 0) {
                     newPatient.setObservations((String[]) observations.toArray(new String[observations.size()]));
                 }
+
+                System.out.println("observations: " + observations);
                 //Loops through patients conditions to convert them to a readable string
                 ArrayList<String> conditions = new ArrayList<String>();
                 for (Condition c : getCondition(current_patient.getId(), client)){
@@ -209,7 +214,10 @@ public class GetPatientsController {
                 
                 patientsMap.put(newPatient.getPatientID(),newPatient);
             }
-
+            i++;
+            if (i == 10){
+                break;
+            }
         }
         return patientsMap;
     }
