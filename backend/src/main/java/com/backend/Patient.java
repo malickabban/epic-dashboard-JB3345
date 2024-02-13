@@ -7,6 +7,7 @@ public class Patient {
     private boolean deceased;
     public String[] conditions;
     public String[] observations;
+    public String[] encounters;
 
     public Patient(String name){
         this.name = name;
@@ -34,6 +35,9 @@ public class Patient {
     public String[] getObservations() {
         return observations;
     }
+    public String[] getEncounters() {
+        return encounters;
+    }
 
 
     // Setter methods
@@ -42,6 +46,9 @@ public class Patient {
     }
     public void setConditions(String[] conditions) {
         this.conditions = conditions;
+    }
+    public void setEncounters(String[] encounters) {
+        this.encounters = encounters;
     }
     public void setObservations(String[] observations) {
         this.observations = observations;
