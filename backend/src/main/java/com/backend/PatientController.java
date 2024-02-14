@@ -21,32 +21,27 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PatientController {
 
+    @Autowired
+    private GetPatientsHourly getPatientsHourly;
+
     // This main method exists for debugging purposes
-    public static void main(String[] args){
-        try {
-            PatientController pat = new PatientController();
-            System.out.println(pat.getPatients());
-        } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Exception in PatientController main");
-        }
-    }
+    // public static void main(String[] args){
+    //     try {
+    //         PatientController pat = new PatientController();
+    //         System.out.println(pat.getPatients());
+    //     } catch (Exception e) {
+    //         // TODO: handle exception
+    //         System.out.println("Exception in PatientController main " + e);
+    //     }
+    // }
     @Autowired
     private GetPatientsController getPatientsController;
 
     @GetMapping("/getPatients")
     @ResponseBody
     public String getPatients() {
-        try {
-            //ObjectMapper turns patients into a string that resembles json
-            ObjectMapper objectMapper = new ObjectMapper();
-            getPatientsController = new GetPatientsController();
-            HashMap<String, com.backend.Patient> patients = getPatientsController.getData();
-            return objectMapper.writeValueAsString(patients);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "error";
-        }
+        return getPatientsHourly.getGlobalVariable();
+       
     }
 }
