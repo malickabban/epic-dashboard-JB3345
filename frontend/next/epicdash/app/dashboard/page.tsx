@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
 import Search from "./components/Search";
-import { HiPlus, HiMinus } from "react-icons/hi";
+import BasicInfo from "./components/BasicInfo"
+
 export type Patient = {
   // Define the structure of your JSON data here
   // For example:
@@ -28,24 +29,12 @@ const Dashboard: React.FC = () => {
   const [conditionsActive, setConditionsActive] = useState(false);
   const [historyActive, setHistoryActive] = useState(false);
   const [observationsActive, setObservationsActive] = useState(false);
+  const [bioActive, setBioActive] = useState(false);
 
+  //handles when the selected patient changes
   const handleButtonClick = (key: string) => {
     if (displayedPatients) {
-      const observationsCard = document.getElementById("observationsCard");
-      const historyCard = document.getElementById("historyCard");
-      const conditionsCard = document.getElementById("conditionsCard");
-      if (observationsCard && observationsCard.style.display === "none") {
-        observationsCard.style.display = "block";
-      }
-      if (historyCard && historyCard.style.display === "none") {
-        historyCard.style.display = "block";
-      }
-      if (conditionsCard && conditionsCard.style.display === "none") {
-        conditionsCard.style.display = "block";
-      }
-      setConditionsActive(false);
-      setHistoryActive(false);
-      setObservationsActive(false);
+      resetPatient();
       setSelectedPatient(displayedPatients[key]);
       const next = document.getElementById(key);
       const prev = document.getElementsByClassName("list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10 active");
@@ -58,14 +47,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleRemovePatient = (key: string) => {
-    if (displayedPatients && data) {
-      const thing:PatientMap = {}
-      Object.keys(displayedPatients).map((key2) => thing[key2] = displayedPatients[key2]);
-      delete thing[key];
-      const observationsCard = document.getElementById("observationsCard");
+  //resets the basic info view for changing the selected patient or deleting a patient
+  const resetPatient = () => {
+    const observationsCard = document.getElementById("observationsCard");
       const historyCard = document.getElementById("historyCard");
       const conditionsCard = document.getElementById("conditionsCard");
+      const bioCard = document.getElementById("bioCard");
       if (observationsCard && observationsCard.style.display === "none") {
         observationsCard.style.display = "block";
       }
@@ -75,13 +62,28 @@ const Dashboard: React.FC = () => {
       if (conditionsCard && conditionsCard.style.display === "none") {
         conditionsCard.style.display = "block";
       }
+      if (bioCard && bioCard.style.display === "none") {
+        bioCard.style.display = "block";
+      }
       setConditionsActive(false);
       setHistoryActive(false);
       setObservationsActive(false);
+      setBioActive(false);
+  };
+
+  //removes patient from displayed patients list and resets selected patient
+  const handleRemovePatient = (key: string) => {
+    if (displayedPatients && data) {
+      const thing:PatientMap = {}
+      Object.keys(displayedPatients).map((key2) => thing[key2] = displayedPatients[key2]);
+      delete thing[key];
+      resetPatient();
       setDisplayedPatients(thing);
       setSelectedPatient(null);
     }
   };
+
+  //adds patient to displayed patient list
   const handleAddPatient = (key: string) => {
     if (displayedPatients && data && data[key] != undefined && displayedPatients[key] == undefined) {
       const thing:PatientMap = {}
@@ -98,6 +100,8 @@ const Dashboard: React.FC = () => {
       setDisplayedPatients(thing);
     }
   }
+
+  //gets all of the patients from the backend and loads them into data state and names state
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -161,7 +165,6 @@ const Dashboard: React.FC = () => {
       setNames(thing || null);
     }
   },[searchValue]);
-  // Handle the removal of the bottom-most patient
 
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
@@ -195,94 +198,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className="col-span-6 row-span-5">
-        <div className="col-span card shadow-md">
-        <h4 className="mx-5 my-2 text-center bg-[var(--bg)] text-[var(--text)] p-2 rounded">Basic Information</h4>
-          <div className="grid grid-cols-3 grid-rows-1 my-10 gap-4">
-            <div className="card shadow-md hover:shadow-2xl ml-2 w-[33] col-span-1 row-span">
-            <div className="block h-[300px] align-middle overflow-auto">
-              <p className="ml-1 mt-20">Name: {selectedPatient ? selectedPatient.name : ""}</p>
-              <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
-              <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
-              <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
-              </div>
-              </div>
-              <div className="card shadow-md hover:shadow-2xl col-span-1 row-span w-[33]">
-              <div className="flex justify-between">
-              <h6 className="ml-2 mt-2 flex-left"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">Observations</span></h6>
-              {observationsActive ?
-               <HiPlus className="mr-1 mt-1 float-right" 
-               onClick= {() => {
-                const item = document.getElementById("observationsCard");
-                if (item && selectedPatient) item.style.display = "block";
-                setObservationsActive(false);
-              }}/> :
-              <HiMinus
-                  className="mr-1 mt-1 float-right"
-                  onClick= {() => {
-                    const item = document.getElementById("observationsCard");
-                    if (item && selectedPatient) item.style.display = "none";
-                    setObservationsActive(true);
-                  }}
-              />
-                }
-              </div>
-              <div className="block h-[300px] overflow-auto" id="observationsCard">
-                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.observations ? 
-                selectedPatient.observations.map((item) => item ? item + "\n\n" : "") : ""}</p>
-              </div>
-              </div>
-              <div className="card shadow-md hover:shadow-2xl col-span-1 row-span mr-2 w-[33]" >
-              <div className="flex justify-between">
-              <h6 className="ml-2 mt-2"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">Conditions</span></h6>
-              {conditionsActive ?
-               <HiPlus className="mr-1 mt-1 float-right" 
-               onClick= {() => {
-                const item = document.getElementById("conditionsCard");
-                if (item && selectedPatient) item.style.display = "block";
-                setConditionsActive(false);
-              }}/> :
-              <HiMinus
-                  className="mr-1 mt-1 float-right"
-                  onClick= {() => {
-                    const item = document.getElementById("conditionsCard");
-                    if (item && selectedPatient) item.style.display = "none";
-                    setConditionsActive(true);
-                  }}
-              />
-                }
-              </div>
-              <div className="block h-[300px] overflow-auto" id="conditionsCard">
-                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.conditions ? 
-                    selectedPatient.conditions.map((item) => item ? item + "\n\n" : "") : ""}</p>
-              </div>
-              </div>
-              </div>
-              <div className="card shadow-md hover:shadow-2xl mx-2 mb-1" >
-              <div className="flex justify-between">
-              <h6 className="ml-2 mt-2"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">History</span></h6>
-              {historyActive ?
-               <HiPlus className="mr-1 mt-1 float-right" 
-               onClick= {() => {
-                const item = document.getElementById("historyCard");
-                if (item && selectedPatient) item.style.display = "block";
-                setHistoryActive(false);
-              }}/> :
-              <HiMinus
-                  className="mr-1 mt-1 float-right"
-                  onClick= {() => {
-                    const item = document.getElementById("historyCard");
-                    if (item && selectedPatient) item.style.display = "none";
-                    setHistoryActive(true);
-                  }}
-              />
-                }
-              </div>
-                <div className="block h-[200px] overflow-auto" id="historyCard">
-                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.encounters ?
-                 selectedPatient.encounters.map((item) => item ? item + "\n" : "") : ""}</p>
-                 </div>
-            </div>
-         </div>
+        <BasicInfo bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
+        observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
 
       <div className="row-span-3 col-span-3">
         <div className="col-md-3 .offset-md-3">
