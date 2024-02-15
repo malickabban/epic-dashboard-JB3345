@@ -33,7 +33,6 @@ h2 {
 }
 
 body {
-  padding: 1rem;
   background-color: var(--background-start-rgb);
   color: var(--text);
 }

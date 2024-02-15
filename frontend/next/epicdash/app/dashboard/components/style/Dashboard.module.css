@@ -1,12 +1,14 @@
 .container {
     display: flex;
+    height: 100%;
+    width: 100%;
 }
-
 .menu {
     flex: 0.5;
     background-color: var(--bgSoft);
-    padding: 20px;
-    
+    padding: 20px; 
+    display:block;  
+    max-width: min-content;
 }
 
 .content {

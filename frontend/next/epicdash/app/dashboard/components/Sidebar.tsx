@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
 import styles from "./style/Sidebar.module.css"
+import { HiMenu } from "react-icons/hi";
 import {
     MdDashboard,
     MdOutlineSettings,
@@ -9,6 +11,14 @@ import {
   } from "react-icons/md";
 import Menu from "./Menu";
 
+const handlCollapse = () => {
+  const item = document.getElementById("ulgroup");
+  if (item && item.style.display === "none") {
+    item.style.display = "block"
+  } else if (item) {
+    item.style.display = "none"
+  }
+}
 const menuItems = [
     {
       title: "Pages",
@@ -40,7 +50,7 @@ const menuItems = [
         },
         {
             title: "Logout",
-            path: "/dashboard/logout",
+            path: "/",
             icon: <MdLogout />,
           }
       ]
@@ -50,7 +60,10 @@ const menuItems = [
 const Sidebar = () => {
     return (
         <div className={styles.container}>
-            <ul>
+            <div className={styles.hide} onClick={handlCollapse}>
+            <HiMenu size={'50px'} />
+            </div>
+            <ul className={styles.disp} id="ulgroup">
                 { menuItems.map(cat => (
                 <li key={cat.title}>
                 <hr/>

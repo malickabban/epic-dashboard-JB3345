@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
 import Search from "./components/Search";
+import { HiOutlineX } from "react-icons/hi";
 
 export type Patient = {
   // Define the structure of your JSON data here
@@ -37,7 +38,6 @@ const Dashboard: React.FC = () => {
       if (next) {
         next.className = next.className + " active";
       }
-      console.log(next);
     }
   };
 
@@ -86,6 +86,9 @@ const Dashboard: React.FC = () => {
               name: result[key].name,
               generalPractitioner: result[key].generalPractitioner,
               patientID: result[key].patientID,
+              conditions: result[key].conditions,
+              observations: result[key].observations,
+              encounters: result[key].encounters,
             };
             arr.push(result[key].name);
             if (data) {
@@ -131,10 +134,9 @@ const Dashboard: React.FC = () => {
   return (
     
     <div className=" grid grid-cols-9 grid-rows-7 gap-4 w-[100%] min-h-screen">
-              <h2 id="center" className="card shadow-md m-0 p-0 col-span-9 justify-content-center">Epic Dashboard </h2>
         <div className="row-span-6 col-span-2 card shadow-md">
           <div>
-          <h4 className="mb-3 mt-1 ml-1">Patients</h4>
+          <h4 className="mb-3 mt-3 ml-2"><span className="bg-[var(--bg)] text-[var(--text)] p-2 rounded">Patients</span></h4>
             <div className="mb-4 ml-1" >
               <Search onSearch={handleSearch} names={names} onAdd={handleAddPatient}/>
             </div>
@@ -159,33 +161,47 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-span-4 row-span-3">
-        <div className="col-span card shadow-md hover:shadow-2xl">
-          <h4 className="ml-1 mt-1">Basic Information</h4>
-            <div>
-              <p className="ml-1">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+        <div className="col-span-6 row-span-5">
+        <div className="col-span card shadow-md hover:shadow-2xl min-h-[600px]">
+        <h4 className="mx-5 my-2 text-center bg-[var(--bg)] text-[var(--text)] p-2 rounded">Basic Information</h4>
+          <div className="grid grid-cols-3 grid-rows-1 my-10 gap-4">
+            <div className="card shadow-md hover:shadow-2xl ml-2  max-w-[33] col-span-1 row-span">
+            <div className="block h-[300px] align-middle overflow-auto">
+              <p className="ml-1 mt-20">Name: {selectedPatient ? selectedPatient.name : ""}</p>
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
               <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
               <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
+              </div>
+              </div>
+              <div className="card shadow-md hover:shadow-2xl col-span-1 row-span max-w-[33]">
+              <h6 className="ml-2 mt-2"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">Observations</span></h6>
+              <div className="block h-[300px] overflow-auto">
+                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.observations ? selectedPatient.observations.map((item) => item ? item + "\n\n" : "") : ""}</p>
+              </div>
+              </div>
+              <div className="card shadow-md hover:shadow-2xl col-span-1 row-span mr-2 max-w-[33]">
+              <h6 className="ml-2 mt-2"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">Conditions</span></h6>
+              <div className="block h-[300px] overflow-auto">
+                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.conditions ? 
+                    selectedPatient.conditions.map((item) => item ? item + "\n\n" : "") : ""}</p>
+              </div>
+              </div>
+              </div>
+              <div className="card shadow-md hover:shadow-2xl">
+              <h6 className="ml-2 mt-2"><span className="bg-[var(--bg)] text-[var(--text)] p-1 rounded">History</span></h6>
+                <div className="block h-[200px] overflow-auto">
+                <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.encounters ?
+                 selectedPatient.encounters.map((item) => item ? item + "\n" : "") : ""}</p>
+                 </div>
             </div>
          </div>
 
-            <div className="col-span card shadow-md hover:shadow-2xl">
-          <h4 className="ml-2 mt-2">Detailed</h4>
-            <div>
-              <p className="ml-2">Observations: {selectedPatient ? selectedPatient.observations : ""}</p>
-              <p className="ml-2">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
-              <p className="ml-2">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
-              <p className="ml-2">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
-            </div>
-        </div>
-
-      </div>
       <div className="row-span-3 col-span-3">
         <div className="col-md-3 .offset-md-3">
         </div>
 
       </div>
+    </div>
     </div>
   );
 };

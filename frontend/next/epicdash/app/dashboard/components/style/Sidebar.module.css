@@ -3,4 +3,13 @@
     top: 40px;
     color: white;
 }
-
+.hide:hover {
+    background-color: #2e374a;
+}
+.hide{
+    width: 50px;
+    justify-content: right;
+}
+.disp{
+    display: block;
+}
