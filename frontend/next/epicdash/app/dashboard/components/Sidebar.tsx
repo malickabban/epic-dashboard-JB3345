@@ -11,7 +11,7 @@ import {
   } from "react-icons/md";
 import Menu from "./Menu";
 
-const handlCollapse = () => {
+const handleCollapse = () => {
   const item = document.getElementById("ulgroup");
   if (item && item.style.display === "none") {
     item.style.display = "block"
@@ -60,7 +60,7 @@ const menuItems = [
 const Sidebar = () => {
     return (
         <div className={styles.container}>
-            <div className={styles.hide} onClick={handlCollapse}>
+            <div className={styles.hide} onClick={handleCollapse}>
             <HiMenu size={'50px'} />
             </div>
             <ul className={styles.disp} id="ulgroup">
