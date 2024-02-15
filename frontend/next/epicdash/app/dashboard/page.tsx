@@ -86,6 +86,10 @@ const Dashboard: React.FC = () => {
               name: result[key].name,
               generalPractitioner: result[key].generalPractitioner,
               patientID: result[key].patientID,
+              conditions: result[key].conditions,
+              observations: result[key].observations,
+              encounters: result[key].encounters,
+
             };
             arr.push(result[key].name);
             if (data) {
@@ -130,9 +134,16 @@ const Dashboard: React.FC = () => {
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
     
+    
     <div className=" grid grid-cols-9 grid-rows-7 gap-4 w-[100%] min-h-screen">
+        <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+        ...
+        </button>
+     
               <h2 id="center" className="card shadow-md m-0 p-0 col-span-9 justify-content-center">Epic Dashboard </h2>
         <div className="row-span-6 col-span-2 card shadow-md">
+
+       
           <div>
           <h4 className="mb-3 mt-1 ml-1">Patients</h4>
             <div className="mb-4 ml-1" >
@@ -170,19 +181,25 @@ const Dashboard: React.FC = () => {
             </div>
          </div>
 
-            <div className="col-span card shadow-md hover:shadow-2xl">
-          <h4 className="ml-2 mt-2">Detailed</h4>
+            
+
+      <div className="col-span card shadow-md hover:shadow-2xl">
+          <h4 className="ml-2 mt-2">Conditions</h4>
             <div>
               <p className="ml-2">Observations: {selectedPatient ? selectedPatient.observations : ""}</p>
-              <p className="ml-2">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
-              <p className="ml-2">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
-              <p className="ml-2">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
+
             </div>
         </div>
+        <div className="col-span card shadow-md hover:shadow-2xl">
+          <h4 className="ml-2 mt-2">Encounters</h4>
+            <div>
 
-      </div>
+              <p className="ml-2">Encounters: {selectedPatient ? selectedPatient.encounters : ""}</p>
+            </div>
+        </div>
       <div className="row-span-3 col-span-3">
         <div className="col-md-3 .offset-md-3">
+        </div>
         </div>
 
       </div>
