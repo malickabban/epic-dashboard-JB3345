@@ -10,6 +10,8 @@ import Bio from "./Bio"
 import Conditions from "./Conditions"
 import History from "./History"
 export type basicInput = {
+    basicActive: boolean,
+    setBasicActive: (value:boolean) => void,
     bioActive: boolean,
     selectedPatient: Patient | null,
     setBioActive: (value:boolean) => void
@@ -21,12 +23,58 @@ export type basicInput = {
     setConditionsActive: (value:boolean) => void
 }
 
+
+
 //Basic Information card which combines all of the other cards into 1 big component
 const BasicInfo = (input: basicInput) => {
-    const {bioActive, selectedPatient, setBioActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, conditionsActive, setConditionsActive} = input;
+    const {basicActive, setBasicActive, bioActive, selectedPatient, setBioActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, conditionsActive, setConditionsActive} = input;
+
+    //Handle making everything visible
+    const handlePlus = () => {
+      const item = document.getElementById("bioCard");
+      const item2 = document.getElementById("conditionsCard");
+      const item3 = document.getElementById("historyCard");
+      const item4 = document.getElementById("observationsCard");
+      if (item && selectedPatient) item.style.display = "block";
+      if (item2 && selectedPatient) item2.style.display = "block";
+      if (item3 && selectedPatient) item3.style.display = "block";
+      if (item4 && selectedPatient) item4.style.display = "block";
+      setBasicActive(false);
+      setBioActive(false);
+      setConditionsActive(false);
+      setHistoryActive(false);
+      setObservationsActive(false);
+    };
+
+    //Handle making everything invisible
+    const handleMinus = () => {
+      const item = document.getElementById("bioCard");
+      const item2 = document.getElementById("conditionsCard");
+      const item3 = document.getElementById("historyCard");
+      const item4 = document.getElementById("observationsCard");
+      if (item && selectedPatient) item.style.display = "none";
+      if (item2 && selectedPatient) item2.style.display = "none";
+      if (item3 && selectedPatient) item3.style.display = "none";
+      if (item4 && selectedPatient) item4.style.display = "none";
+      setBasicActive(true);
+      setBioActive(true);
+      setConditionsActive(true);
+      setHistoryActive(true);
+      setObservationsActive(true);
+    };
     return (
         <div className="col-span card shadow-md">
-        <h4 className="mx-5 my-2 text-center bg-[var(--bg)] text-[var(--text)] p-2 rounded">Basic Information</h4>
+        <div className="flex justify-between">
+        <h4 className="flex-left ml-3 my-2 text-center bg-[var(--bg)] text-[var(--text)] p-2 rounded">Basic Information</h4>
+        {basicActive ?
+               <HiPlus className="mr-1 mt-2 float-right" 
+               onClick= {handlePlus}/> :
+              <HiMinus
+                  className="mr-1 mt-2 float-right"
+                  onClick= {handleMinus}
+              />
+                }
+          </div>
           <div className="grid grid-cols-3 grid-rows-1 my-10 gap-4">
             <div className="card shadow-md hover:shadow-2xl ml-2 w-[33] col-span-1 row-span">
             <Bio bioActive={bioActive} setBioActive={setBioActive} selectedPatient={selectedPatient}/>

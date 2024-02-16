@@ -30,6 +30,7 @@ const Dashboard: React.FC = () => {
   const [historyActive, setHistoryActive] = useState(false);
   const [observationsActive, setObservationsActive] = useState(false);
   const [bioActive, setBioActive] = useState(false);
+  const [basicActive, setBasicActive] = useState(false);
 
   //handles when the selected patient changes
   const handleButtonClick = (key: string) => {
@@ -65,6 +66,7 @@ const Dashboard: React.FC = () => {
       if (bioCard && bioCard.style.display === "none") {
         bioCard.style.display = "block";
       }
+      setBasicActive(false);
       setConditionsActive(false);
       setHistoryActive(false);
       setObservationsActive(false);
@@ -198,7 +200,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className="col-span-6 row-span-5">
-        <BasicInfo bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
+        <BasicInfo basicActive={basicActive} setBasicActive={setBasicActive} bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
         observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
 
       <div className="row-span-3 col-span-3">
