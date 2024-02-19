@@ -29,7 +29,7 @@ public class GetPatientsHourly {
          try {
             //ObjectMapper turns patients into a string that resembles json
             ObjectMapper objectMapper = new ObjectMapper();
-            GetPatientsController controller = new GetPatientsController();
+            GetPatientsService controller = new GetPatientsService();
             HashMap<String, com.backend.Patient> recieved_patients = controller.getData();
             patients = objectMapper.writeValueAsString(recieved_patients);
 
@@ -37,24 +37,6 @@ public class GetPatientsHourly {
             e.printStackTrace();
             patients = "error";
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       // System.out.println("Global variable updated: " + globalVariable);
-
 
     }
 
