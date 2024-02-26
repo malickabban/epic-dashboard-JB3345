@@ -5,6 +5,9 @@ public class Patient {
     private String name, general_practitioner;
     private String patient_id;
     private boolean deceased;
+    public String[] conditions;
+    public String[] observations;
+    public String[] encounters;
 
     public Patient(String name){
         this.name = name;
@@ -26,13 +29,30 @@ public class Patient {
     public boolean isDeceased(){
         return deceased;
     }
+    public String[] getConditions() {
+        return conditions;
+    }
+    public String[] getObservations() {
+        return observations;
+    }
+    public String[] getEncounters() {
+        return encounters;
+    }
 
 
     // Setter methods
     public void setName(String name) {
         this.name = name;
     }
-
+    public void setConditions(String[] conditions) {
+        this.conditions = conditions;
+    }
+    public void setEncounters(String[] encounters) {
+        this.encounters = encounters;
+    }
+    public void setObservations(String[] observations) {
+        this.observations = observations;
+    }
     public void setGeneralPractitioner(String general_practitioner) {
         this.general_practitioner = general_practitioner;
     }

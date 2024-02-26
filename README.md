@@ -5,6 +5,21 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Release Notes
 
+## Version 0.2.0
+
+### Features
+* Patient identifying data, diagnoses, and visit history are now displayed.
+* Any displayed data can be removed from the dashboard.
+* Made more improvements to the UI.
+
+### Bug Fixes
+* Changed API calls to occur on start up, improving performance
+* Decreased the number of patients obtained from the API
+
+### Known Issues
+* Duplicate patients are still displayed
+* Formatting needs to be improved
+
 ## Version 0.1.0
 
 ### Features
