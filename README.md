@@ -30,21 +30,6 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ### Known Issues
 * Various Formatting bugs
 
-## Version 0.2.0
-
-### Features
-* Patient identifying data, diagnoses, and visit history are now displayed.
-* Any displayed data can be removed from the dashboard.
-* Made more improvements to the UI.
-
-### Bug Fixes
-* Changed API calls to occur on start up, improving performance
-* Decreased the number of patients obtained from the API
-
-### Known Issues
-* Duplicate patients are still displayed
-* Formatting needs to be improved
-
 # Tech Stack and Project Architecture
 
 The project is a web app consisting of a Next.js frontend framework, with code written in Typescript, with Bootstrap and Tailwind css and a Spring Boot java backend.
