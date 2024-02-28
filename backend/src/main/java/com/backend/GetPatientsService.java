@@ -3,19 +3,12 @@ package com.backend;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
-import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import org.hl7.fhir.r4.model.Encounter;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Condition;
-import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
@@ -83,8 +76,15 @@ public class GetPatientsService {
                 addEncounters(current_patient, newPatient);
                 addObservations(current_patient, newPatient);
                 addPractitioner(current_patient, newPatient);
-                
-
+                addMedications(current_patient, newPatient);
+                // Left because only 1 patient has medication, might want to test more in future
+                /*
+                if (newPatient.getMedications() != null) {
+                    for (String x : newPatient.getMedications()) {
+                        System.out.println(x);
+                    }
+                }
+                */
                 patientsMap.put(newPatient.getPatientID(), newPatient);
             }
             count++;
@@ -227,6 +227,17 @@ public class GetPatientsService {
         }
     }
 
+    private void addMedications(Patient current_patient, com.backend.Patient newPatient) {
+        ArrayList<String> medications = new ArrayList<String>();
+        for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
+            CodeableConcept m = (CodeableConcept) (c.getMedication());
+            medications.add(m.getText());
+        }
+        // If there are conditions add them to the patient
+        if (medications.size() != 0) {
+            newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
+        }
+    }
     private void getChadsVascValues(Condition condition, com.backend.Patient newPatient) {
         if (condition.getCode().getCodingFirstRep().getDisplay() == null) {
             return;

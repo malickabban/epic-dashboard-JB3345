@@ -16,6 +16,7 @@ public class Patient {
     public String[] conditions;
     public String[] observations;
     public String[] encounters;
+    public String[] medications;
 
 
     public Patient(String name){
@@ -68,6 +69,9 @@ public class Patient {
     public String[] getEncounters() {
         return encounters;
     }
+    public String[] getMedications() {
+        return medications;
+    }
 
 
     // Setter methods
@@ -86,6 +90,9 @@ public class Patient {
     }
     public void setObservations(String[] observations) {
         this.observations = observations;
+    }
+    public void setMedications(String[] medications) {
+        this.medications = medications;
     }
     public void setGeneralPractitioner(String general_practitioner) {
         this.general_practitioner = general_practitioner;

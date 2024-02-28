@@ -30,7 +30,6 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ### Known Issues
 * Various Formatting bugs
 
-
 # Tech Stack and Project Architecture
 
 The project is a web app consisting of a Next.js frontend framework, with code written in Typescript, with Bootstrap and Tailwind css and a Spring Boot java backend.
