@@ -236,19 +236,25 @@ public class GetPatientsService {
             return;
         }
         if (codeDisplay.contains("congestive heart failure")) {
-            newPatient.setCHF(true);;
+            newPatient.setCHF(true);
+            return;
         }
-        if (codeDisplay.contains("stroke") || codeDisplay.contains("transient ischemic attack")) {
+        //need to check if these conditions are right
+        if (codeDisplay.contains("stroke") || codeDisplay.contains("transient ischemic attack") || codeDisplay.contains("embolism")) {
             newPatient.setStroke(true);
+            return;
         }
         if (codeDisplay.contains("diabetes")) {
             newPatient.setDiabetes(true);
+            return;
         }
         if (codeDisplay.contains("vascular disease")) {
             newPatient.setVD(true);
+            return;
         }
         if (codeDisplay.contains("hypertension")) {
             newPatient.setHypertension(true);
+            return;
         }
     }
 
