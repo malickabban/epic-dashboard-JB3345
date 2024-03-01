@@ -1,4 +1,4 @@
-import Signin from "./login/SigninForm"
+import Signin from "./dashboard/login/SigninForm"
 
 const Home = () => {
   return (

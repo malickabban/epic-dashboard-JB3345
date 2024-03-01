@@ -31,7 +31,7 @@ const Search = (input: SearchInput) => {
           {names && (
                 <ul className="mt-1 mb-1 pl-2 bg-white rounded-bl rounded-br max-h-56 overflow-y-auto">
                   {Object.keys(names).map((key) => (
-                    <li className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2" key={key} onMouseDown={() => {
+                    <li className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2 border-b" key={key} onMouseDown={() => {
                       onAdd(key)
                       setText(names[key].name)
                       }}>

@@ -34,8 +34,8 @@ const menuItems = [
       title: "User",
       list: [
         {
-          title: "History",
-          path: "/dashboard/history",
+          title: "Score",
+          path: "/dashboard/score",
           icon: <MdHistory />,
         },
         {
@@ -61,7 +61,7 @@ const Sidebar = () => {
     return (
         <div className={styles.container}>
             <div className={styles.hide} onClick={handleCollapse}>
-            <HiMenu size={'50px'} />
+            <HiMenu size={'30px'} />
             </div>
             <ul className={styles.disp} id="ulgroup">
                 { menuItems.map(cat => (
