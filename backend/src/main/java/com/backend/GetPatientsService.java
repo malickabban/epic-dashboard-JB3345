@@ -94,6 +94,8 @@ public class GetPatientsService {
         }
         return patientsMap;
     }
+    // Cacluating RCRI
+
 
     private void calculateChadsVasc(HashMap<String, com.backend.Patient> patients) {
         for (com.backend.Patient patient : patients.values()) {
@@ -137,18 +139,18 @@ public class GetPatientsService {
             patient.setChadsVasc(chadsVascScore);
         }
     }
-
+    // Method for adding observations
     private void addObservations(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> observations= new ArrayList<String>();
         for (Observation o : getResourcesForPatient(client, Observation.class, current_patient.getId())){
             observations.add(o.getCode().getText());
         }
         if (observations.size() != 0) {
-            newPatient.setObservations((String[]) observations.toArray(new String[observations.size()]));
+            newPatient.setObservations((String[]) observations.toArray(new String[observations.size()])); 
         }
     }
 
-    private void addEncounters(Patient current_patient, com.backend.Patient newPatient) {
+    private void addEncounters(Patient current_patient, com.backend.Patient newPatient) { 
         ArrayList<String> encounterDetails = new ArrayList<>();
         for (Encounter e : getResourcesForPatient(client, Encounter.class, current_patient.getId())) {
             StringBuilder encounterInfo = new StringBuilder();
@@ -184,7 +186,6 @@ public class GetPatientsService {
                     }
                 }
             }
-
             // Only add to the list if encounterInfo has content
             if (encounterInfo.length() > 0) {
                 encounterDetails.add(encounterInfo.toString());
@@ -238,6 +239,7 @@ public class GetPatientsService {
             newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
         }
     }
+    
     private void getChadsVascValues(Condition condition, com.backend.Patient newPatient) {
         if (condition.getCode().getCodingFirstRep().getDisplay() == null) {
             return;
@@ -291,6 +293,7 @@ public class GetPatientsService {
                 }
             }
         } catch (Exception e) {
+            //One instance when testing on practitioner having a different reference
             System.err.println("Error processing practitioner reference: " + e.getMessage());
         }
     }
