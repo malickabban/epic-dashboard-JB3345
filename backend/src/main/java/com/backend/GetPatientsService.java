@@ -13,6 +13,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +145,19 @@ public class GetPatientsService {
         ArrayList<String> observations= new ArrayList<String>();
         for (Observation o : getResourcesForPatient(client, Observation.class, current_patient.getId())){
             observations.add(o.getCode().getText());
+
+            // Creatinine Level Check
+            CodeableConcept concept = o.getCode();
+            if (concept.hasCoding()) {
+                for (Coding coding : concept.getCoding()) {
+                    if (coding.getDisplay().toLowerCase().contains("creatinine")) {
+                        Quantity quantity = o.getValueQuantity();
+                        if (quantity != null && quantity.getValue().compareTo(new BigDecimal("2.0")) > 0) {
+                            newPatient.setPreOperativeCreatinineAboveTwo(true);
+                        }
+                    }
+                }
+            }
         }
         if (observations.size() != 0) {
             newPatient.setObservations((String[]) observations.toArray(new String[observations.size()])); 
@@ -220,6 +234,19 @@ public class GetPatientsService {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
             getChadsVascValues(c, newPatient);
+
+            String conditionDisplay = c.getCode().getCodingFirstRep().getDisplay().toLowerCase();
+        
+            // Ischemic Heart Disease
+            if (conditionDisplay.contains("ischemic heart disease") || conditionDisplay.contains("myocardial infarction")) {
+                newPatient.setIschemicHeartDisease(true);
+            }
+            
+            // Cerebrovascular Disease
+            if (conditionDisplay.contains("cerebrovascular accident") || conditionDisplay.contains("stroke") || conditionDisplay.contains("transient ischemic attack")) {
+                newPatient.setCerebrovascularDisease(true);
+            }
+
             conditions.add(c.getCode().getText());
         }
         // If there are conditions add them to the patient
@@ -233,6 +260,11 @@ public class GetPatientsService {
         for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
             CodeableConcept m = (CodeableConcept) (c.getMedication());
             medications.add(m.getText());
+
+            // Check for Insulin 
+            if (m.getText().toLowerCase().contains("insulin")) {
+                newPatient.setOnPreOperativeInsulin(true);
+            }
         }
         // If there are conditions add them to the patient
         if (medications.size() != 0) {
