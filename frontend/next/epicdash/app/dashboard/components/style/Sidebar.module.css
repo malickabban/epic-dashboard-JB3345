@@ -1,15 +1,22 @@
 .container{
     position: sticky;
-    top: 40px;
+    top: 30px;
     color: white;
 }
 .hide:hover {
-    background-color: #2e374a;
+    background-color: #51628c;
 }
 .hide{
-    width: 50px;
+    width: 30px;
     justify-content: right;
 }
 .disp{
     display: block;
 }
+
+.cat{
+    color: var(--text);
+    font-weight: bold;
+    font-size: 15px;
+    margin: 10px 0px;
+  }

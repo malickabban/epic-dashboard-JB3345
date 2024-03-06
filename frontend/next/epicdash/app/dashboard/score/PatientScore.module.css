@@ -1,0 +1,30 @@
+.container{
+    background-color: var(--bgSoft);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  .top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table{
+    width: 100%;
+  }
+
+  .addButton{
+    padding: 10px;
+    background-color: #3a34a3;
+    color: var(--text);
+    border: none;
+    border-radius: 10px;
+    cursor: auto;
+  }
+  
+  .addButton:hover,
+  .active {
+    background-color: #15124d;
+  }

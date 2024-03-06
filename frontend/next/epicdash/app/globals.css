@@ -33,8 +33,8 @@ h2 {
 }
 
 body {
-  background-color: var(--background-start-rgb);
-  color: var(--text);
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
 }
 
 a {
