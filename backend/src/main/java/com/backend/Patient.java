@@ -8,11 +8,18 @@ public class Patient {
     private boolean deceased;
     private String gender;
     private int chadsvasc;
+    private int RCRI;
     private boolean CHF = false;
     private boolean stroke = false;
     private boolean diabetes = false;
     private boolean VD = false;
     private boolean hypertension = false;
+    private boolean ischemicHeartDisease = false;
+    private boolean cerebrovascularDisease = false;
+    private boolean diabetesOnInsulin = false;
+    private boolean undergoingHighRiskSurgery = false;
+    private boolean preOperativeCreatinineAboveTwo = false;
+
     public String[] conditions;
     public String[] observations;
     public String[] encounters;
@@ -24,6 +31,22 @@ public class Patient {
     }
 
     // Getter methods
+
+    public boolean hasIschemicHeartDisease() {
+        return ischemicHeartDisease;
+    }
+    public boolean hasCerebrovascularDisease() {
+        return cerebrovascularDisease;
+    }
+    public boolean isDiabetesOnInsulin() {
+        return diabetesOnInsulin;
+    }
+    public boolean isUndergoingHighRiskSurgery() {
+        return undergoingHighRiskSurgery;
+    }
+    public boolean hasPreOperativeCreatinineAboveTwo() {
+        return preOperativeCreatinineAboveTwo;
+    }
     public boolean hasCHF() {
         return CHF;
     }
@@ -128,5 +151,23 @@ public class Patient {
     public void setChadsVasc(int chadsvasc) {
         this.chadsvasc = chadsvasc;
     }
-    
+    public void setRCRIScore(int RCRI) {
+        this.RCRI = RCRI;
+    }
+
+    public void setIschemicHeartDisease(boolean ischemicHeartDisease) {
+        this.ischemicHeartDisease = ischemicHeartDisease;
+    }
+    public void setCerebrovascularDisease(boolean cerebrovascularDisease) {
+        this.cerebrovascularDisease = cerebrovascularDisease;
+    }
+    public void setDiabetesOnInsulin(boolean diabetesOnInsulin) {
+        this.diabetesOnInsulin = diabetesOnInsulin;
+    }
+    public void setUndergoingHighRiskSurgery(boolean undergoingHighRiskSurgery) {
+        this.undergoingHighRiskSurgery = undergoingHighRiskSurgery;
+    }
+    public void setPreOperativeCreatinineAboveTwo(boolean preOperativeCreatinineAboveTwo) {
+        this.preOperativeCreatinineAboveTwo = preOperativeCreatinineAboveTwo;
+    }
 }
