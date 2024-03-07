@@ -34,11 +34,6 @@ const menuItems = [
       title: "User",
       list: [
         {
-          title: "Score",
-          path: "/dashboard/score",
-          icon: <MdHistory />,
-        },
-        {
           title: "Settings",
           path: "/dashboard/settings",
           icon: <MdOutlineSettings />,

@@ -1,10 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
 import Search from "./components/Search";
 import BasicInfo from "./components/BasicInfo"
-
+import { useRouter } from 'next/navigation';
+import {PatientContext, patientContextType} from '../PatientContext'
+import Patient from "./patient/page";
 export type Patient = {
   // Define the structure of your JSON data here
   // For example:
@@ -15,23 +17,21 @@ export type Patient = {
   conditions : string[] | null;
   observations : string[] | null;
   encounters : string[] | null;
-
+  age: number | null;
+  gender: string | null;
+  rcri: number | null;
+  chadsvasc: number | null;
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
 
 const Dashboard: React.FC = () => {
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const { displayedPatients, selectedPatient, setDisplayedPatients,setSelectedPatient,
+    conditionsActive, setConditionsActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, 
+    basicActive, setBasicActive, bioActive, setBioActive, resetPatient} = useContext(PatientContext) as patientContextType
   const [data, setData] = useState<PatientMap | null>({});
-  const [displayedPatients, setDisplayedPatients] =
-    useState<PatientMap | null>(null);
   const [names, setNames] =  useState<PatientMap | null>(null); //For names of patients
-  const [conditionsActive, setConditionsActive] = useState(false);
-  const [historyActive, setHistoryActive] = useState(false);
-  const [observationsActive, setObservationsActive] = useState(false);
-  const [bioActive, setBioActive] = useState(false);
-  const [basicActive, setBasicActive] = useState(false);
-
+  const router = useRouter();
   //handles when the selected patient changes
   const handleButtonClick = (key: string) => {
     if (displayedPatients) {
@@ -49,29 +49,6 @@ const Dashboard: React.FC = () => {
   };
 
   //resets the basic info view for changing the selected patient or deleting a patient
-  const resetPatient = () => {
-    const observationsCard = document.getElementById("observationsCard");
-      const historyCard = document.getElementById("historyCard");
-      const conditionsCard = document.getElementById("conditionsCard");
-      const bioCard = document.getElementById("bioCard");
-      if (observationsCard && observationsCard.style.display === "none") {
-        observationsCard.style.display = "block";
-      }
-      if (historyCard && historyCard.style.display === "none") {
-        historyCard.style.display = "block";
-      }
-      if (conditionsCard && conditionsCard.style.display === "none") {
-        conditionsCard.style.display = "block";
-      }
-      if (bioCard && bioCard.style.display === "none") {
-        bioCard.style.display = "block";
-      }
-      setBasicActive(false);
-      setConditionsActive(false);
-      setHistoryActive(false);
-      setObservationsActive(false);
-      setBioActive(false);
-  };
 
   //removes patient from displayed patients list and resets selected patient
   const handleRemovePatient = (key: string) => {
@@ -98,8 +75,30 @@ const Dashboard: React.FC = () => {
           conditions: data[key].conditions,
           observations: data[key].observations,
           encounters: data[key].encounters,
-      }
+          age: data[key].age,
+          gender: data[key].gender,
+          chadsvasc: 'chadsvasc' in data[key] ? data[key].chadsvasc : null,
+          rcri: 'rcri' in data[key] ? data[key].rcri : null,
+      } 
       setDisplayedPatients(thing);
+    } else {
+        const thing:PatientMap = {}
+        if (data && data[key] != undefined) {
+          thing[key] = {
+            name: data[key].name,
+            deceased: data[key].deceased,
+            generalPractitioner: data[key].generalPractitioner,
+            patientID: data[key].patientID,
+            conditions: data[key].conditions,
+            observations: data[key].observations,
+            encounters: data[key].encounters,
+            age: data[key].age,
+            gender: data[key].gender,
+            chadsvasc: 'chadsvasc' in data[key] ? data[key].chadsvasc : null,
+            rcri: 'rcri' in data[key] ? data[key].rcri : null,
+          } 
+          setDisplayedPatients(thing)
+        }
     }
   }
 
@@ -114,7 +113,7 @@ const Dashboard: React.FC = () => {
         });
         const result = await response.json();
         if (result) {
-          setDisplayedPatients({});
+          console.log(result)
           const thing:PatientMap |null = {};
           const arr:Array<string> = []
           //Manually doing this because Java object from backend was not automatically converting.
@@ -127,23 +126,35 @@ const Dashboard: React.FC = () => {
               conditions: result[key].conditions,
               observations: result[key].observations,
               encounters: result[key].encounters,
+              age: result[key].age,
+              gender: result[key].gender,
+              chadsvasc: 'chadsvasc' in result[key] ? result[key].chadsvasc : null,
+              rcri: 'rcri' in result[key] ? result[key].rcri : null,
             };
             arr.push(result[key].name);
-            if (data) {
-              data[result[key].patientID] = t;
+            if (thing) {
+              thing[result[key].patientID] = t;
             }
             t.encounters?.sort();
           });
-          setData(data);
-          setNames(data);
-          
+          setData(thing);
+          setNames(thing);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
+    if (selectedPatient) {
+      const next = document.getElementById(selectedPatient.patientID);
+      const prev = document.getElementsByClassName("list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10 active");
+      if (prev && prev[0]) {
+        prev[0].className = "list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10";
+      }
+      if (next) {
+        next.className = next.className + " active";
+      }
+    }
   }, []);
 
   const [searchValue, setSearchValue] = useState('')
@@ -170,7 +181,6 @@ const Dashboard: React.FC = () => {
 
   // Your raw data, keys, and selected patient can now be used in the return statement
   return (
-    
     <div className=" grid grid-cols-9 grid-rows-7 gap-4 w-[100%] min-h-screen">
         <div className="row-span-6 col-span-2 card shadow-md">
           <div>
@@ -200,15 +210,17 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className="col-span-6 row-span-5">
-        <BasicInfo basicActive={basicActive} setBasicActive={setBasicActive} bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
-        observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
-
-      <div className="row-span-3 col-span-3">
-        <div className="col-md-3 .offset-md-3">
+          <BasicInfo basicActive={basicActive} setBasicActive={setBasicActive} bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
+          observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
         </div>
-
-      </div>
-    </div>
+        <div className="row-span-3 col-span-1">
+          <div className="card">
+            <button onClick={() => selectedPatient ? router.push('/dashboard/score') : null}>Scores</button>
+            <p className = "text-center">Click SCORES for more details</p>
+            <p>ChadsVasc: {selectedPatient && selectedPatient.chadsvasc ? selectedPatient.chadsvasc : ""}</p>
+            <p>RCRI: {selectedPatient && selectedPatient.rcri ? selectedPatient.rcri : ""}</p>
+          </div>
+        </div>
     </div>
   );
 };

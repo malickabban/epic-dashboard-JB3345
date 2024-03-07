@@ -35,10 +35,12 @@ const History = (input: historyInput) => {
               />
                 }
               </div>
+              {!historyActive &&
                 <div className="block h-[200px] overflow-auto" id="historyCard">
                 <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.encounters ?
                  selectedPatient.encounters.map((item) => item ? item + "\n" : "") : ""}</p>
                  </div>
+              }
         </div>
     )
 }
