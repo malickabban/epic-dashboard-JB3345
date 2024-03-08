@@ -150,7 +150,7 @@ public class GetPatientsService {
             CodeableConcept concept = o.getCode();
             if (concept.hasCoding()) {
                 for (Coding coding : concept.getCoding()) {
-                    if (coding.getDisplay().toLowerCase().contains("creatinine")) {
+                    if (coding.getDisplay() != null && coding.getDisplay().toLowerCase().contains("creatinine")) {
                         Quantity quantity = o.getValueQuantity();
                         if (quantity != null && quantity.getValue().compareTo(new BigDecimal("2.0")) > 0) {
                             newPatient.setPreOperativeCreatinineAboveTwo(true);
@@ -234,9 +234,11 @@ public class GetPatientsService {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
             getChadsVascValues(c, newPatient);
+            String conditionDisplay = "";
+            if (c.getCode().getCodingFirstRep().getDisplay() != null) {
+                conditionDisplay = c.getCode().getCodingFirstRep().getDisplay().toLowerCase();
+            }
 
-            String conditionDisplay = c.getCode().getCodingFirstRep().getDisplay().toLowerCase();
-        
             // Ischemic Heart Disease
             if (conditionDisplay.contains("ischemic heart disease") || conditionDisplay.contains("myocardial infarction")) {
                 newPatient.setIschemicHeartDisease(true);

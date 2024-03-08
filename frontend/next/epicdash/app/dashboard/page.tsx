@@ -7,6 +7,7 @@ import BasicInfo from "./components/BasicInfo"
 import { useRouter } from 'next/navigation';
 import {PatientContext, patientContextType} from '../PatientContext'
 import Patient from "./patient/page";
+import Scores from "./components/Scores"
 export type Patient = {
   // Define the structure of your JSON data here
   // For example:
@@ -21,6 +22,23 @@ export type Patient = {
   gender: string | null;
   rcri: number | null;
   chadsvasc: number | null;
+  CHF: boolean | null;
+  hypertension : boolean | null;
+  stroke : boolean | null;
+  VD : boolean | null;
+  diabetes : boolean | null;
+  undergoingHighRiskSurgery : boolean | null;
+  preOperativeCreatinineAboveTwo: boolean | null;
+  onPreOperativeInsulin: boolean | null;
+  ischemicHeartDisease: boolean | null;
+  cerebrovascularDisease: boolean | null;
+  renalDisease : boolean | null;
+  liverDisease : boolean | null;
+  priorBleeding : boolean | null;
+  inr : boolean | null;
+  medicationBleeds : boolean | null;
+  alcoholUse : boolean | null;
+  hasbled : number | null;
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
@@ -61,42 +79,50 @@ const Dashboard: React.FC = () => {
       setSelectedPatient(null);
     }
   };
-
+  const clonePatient = (data : Patient) => {
+    const t:Patient = {
+      name: data.name,
+      deceased: data.deceased,
+      generalPractitioner: data.generalPractitioner,
+      patientID: data.patientID,
+      conditions: data.conditions,
+      observations: data.observations,
+      encounters: data.encounters,
+      age: data.age,
+      gender: data.gender,
+      chadsvasc: 'chadsvasc' in data ? data.chadsvasc : null,
+      rcri: 'rcri' in data ? data.rcri : null,
+      CHF: 'CHF' in data ? data.CHF : null,
+      hypertension: 'hypertension' in data ? data.hypertension : null,
+      diabetes: 'diabetes' in data ? data.diabetes : null,
+      VD : 'VD' in data ? data.VD : null,
+      stroke : 'stroke' in data ? data.stroke : null,
+      undergoingHighRiskSurgery : data.undergoingHighRiskSurgery,
+      preOperativeCreatinineAboveTwo: data.preOperativeCreatinineAboveTwo,
+      onPreOperativeInsulin: data.onPreOperativeInsulin,
+      ischemicHeartDisease: data.ischemicHeartDisease,
+      cerebrovascularDisease: data.cerebrovascularDisease,
+      renalDisease : 'renalDisease' in data ? data.renalDisease : null,
+      liverDisease : 'liverDisease' in data ? data.liverDisease : null,
+      priorBleeding : 'priorBleeding' in data ? data.priorBleeding : null,
+      inr : 'inr' in data ? data.inr : null,
+      medicationBleeds : 'medicationBleeds' in data ? data.medicationBleeds : null,
+      alcoholUse : 'alcoholUse' in data ? data.alcoholUse : null,
+      hasbled : 'hasbled' in data ? data.hasbled : null
+    } 
+    return t;
+  }
   //adds patient to displayed patient list
   const handleAddPatient = (key: string) => {
     if (displayedPatients && data && data[key] != undefined && displayedPatients[key] == undefined) {
       const thing:PatientMap = {}
       Object.keys(displayedPatients).map((key) => thing[key] = displayedPatients[key]);
-      thing[key] = {
-          name: data[key].name,
-          deceased: data[key].deceased,
-          generalPractitioner: data[key].generalPractitioner,
-          patientID: data[key].patientID,
-          conditions: data[key].conditions,
-          observations: data[key].observations,
-          encounters: data[key].encounters,
-          age: data[key].age,
-          gender: data[key].gender,
-          chadsvasc: 'chadsvasc' in data[key] ? data[key].chadsvasc : null,
-          rcri: 'rcri' in data[key] ? data[key].rcri : null,
-      } 
+      thing[key] = clonePatient(data[key])
       setDisplayedPatients(thing);
     } else {
         const thing:PatientMap = {}
         if (data && data[key] != undefined) {
-          thing[key] = {
-            name: data[key].name,
-            deceased: data[key].deceased,
-            generalPractitioner: data[key].generalPractitioner,
-            patientID: data[key].patientID,
-            conditions: data[key].conditions,
-            observations: data[key].observations,
-            encounters: data[key].encounters,
-            age: data[key].age,
-            gender: data[key].gender,
-            chadsvasc: 'chadsvasc' in data[key] ? data[key].chadsvasc : null,
-            rcri: 'rcri' in data[key] ? data[key].rcri : null,
-          } 
+          thing[key] = clonePatient(data[key])
           setDisplayedPatients(thing)
         }
     }
@@ -118,19 +144,7 @@ const Dashboard: React.FC = () => {
           const arr:Array<string> = []
           //Manually doing this because Java object from backend was not automatically converting.
           Object.keys(result).forEach((key) => {
-            const t:Patient = {
-              deceased: result[key].deceased,
-              name: result[key].name,
-              generalPractitioner: result[key].generalPractitioner,
-              patientID: result[key].patientID,
-              conditions: result[key].conditions,
-              observations: result[key].observations,
-              encounters: result[key].encounters,
-              age: result[key].age,
-              gender: result[key].gender,
-              chadsvasc: 'chadsvasc' in result[key] ? result[key].chadsvasc : null,
-              rcri: 'rcri' in result[key] ? result[key].rcri : null,
-            };
+            const t:Patient = clonePatient(result[key]);
             arr.push(result[key].name);
             if (thing) {
               thing[result[key].patientID] = t;
@@ -214,12 +228,7 @@ const Dashboard: React.FC = () => {
           observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
         </div>
         <div className="row-span-3 col-span-1">
-          <div className="card">
-            <button onClick={() => selectedPatient ? router.push('/dashboard/score') : null}>Scores</button>
-            <p className = "text-center">Click SCORES for more details</p>
-            <p>ChadsVasc: {selectedPatient && selectedPatient.chadsvasc ? selectedPatient.chadsvasc : ""}</p>
-            <p>RCRI: {selectedPatient && selectedPatient.rcri ? selectedPatient.rcri : ""}</p>
-          </div>
+          <Scores selectedPatient={selectedPatient}/>
         </div>
     </div>
   );
