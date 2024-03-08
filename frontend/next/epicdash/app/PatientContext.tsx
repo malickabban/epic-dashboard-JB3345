@@ -24,7 +24,7 @@ export type patientContextType = {
 
 export const PatientContext = createContext<patientContextType | null>(null);
 
-const PatientProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [displayedPatients, setDisplayedPatients] = useState<PatientMap | null>(null);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [conditionsActive, setConditionsActive] = useState(false);
@@ -65,4 +65,4 @@ const PatientProvider: React.FC<{children: React.ReactNode}> = ({ children }) =>
         </PatientContext.Provider>
       );
 }
-export default PatientProvider
+export default PatientSource
