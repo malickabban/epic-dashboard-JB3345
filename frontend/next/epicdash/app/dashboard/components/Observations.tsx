@@ -35,10 +35,12 @@ const Observations = (input: observationInput) => {
               />
                 }
               </div>
+              {!observationsActive &&
               <div className="block h-[300px] overflow-auto" id="observationsCard">
                 <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.observations ? 
                 selectedPatient.observations.map((item) => item ? item + "\n\n" : "") : ""}</p>
               </div>
+              }
         </div>
     )
 }

@@ -34,10 +34,12 @@ const Conditions = (input: conditionsInput) => {
               />
                 }
               </div>
+              {!conditionsActive &&
               <div className="block h-[300px] overflow-auto" id="conditionsCard">
                 <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.conditions ? 
                     selectedPatient.conditions.map((item) => item ? item + "\n\n" : "") : ""}</p>
               </div>
+              }
         </div>
     )
 }
