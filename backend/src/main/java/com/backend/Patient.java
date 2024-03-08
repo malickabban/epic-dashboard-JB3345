@@ -2,18 +2,77 @@ package com.backend;
 
 public class Patient {
 
+    private int age = 0;
     private String name, general_practitioner;
     private String patient_id;
     private boolean deceased;
+    private String gender;
+    private int chadsvasc;
+    private int hasBled;
+    private boolean CHF = false;
+    private boolean stroke = false;
+    private boolean diabetes = false;
+    private boolean VD = false;
+    private boolean hypertension = false;
+    private boolean aspirinClopidogrelNsaid = false;
+    private boolean renalDisease = false;
+    private boolean liverDisease = false;
+    private boolean priorBleeding = false;
+    private boolean heavyDrinker = false;
+    private boolean labileINR = false;
     public String[] conditions;
     public String[] observations;
     public String[] encounters;
+    public String[] medications;
+
 
     public Patient(String name){
         this.name = name;
     }
 
     // Getter methods
+    public boolean hasCHF() {
+        return CHF;
+    }
+    public boolean hasStroke() {
+        return stroke;
+    }
+    public boolean hasDiabetes() {
+        return diabetes;
+    }
+    public boolean hasVD() {
+        return VD;
+    }
+    public boolean hasHypertension() {
+        return hypertension;
+    }
+    public boolean hasAspirinClopidogrelNsaid(){
+        return aspirinClopidogrelNsaid;
+    }
+    public boolean hasRenalDisease() {
+        return renalDisease;
+    }
+    public boolean hasLiverDisease() {
+        return liverDisease;
+    }
+    public boolean hasPriorBleeding() {
+        return priorBleeding;
+    }
+    public boolean hasLabileINR() {
+        return labileINR;
+    }
+    public int getHasBled() {
+        return hasBled;
+    }
+    public boolean isHeavyDrinker() {
+        return heavyDrinker;
+    }
+    public int getAge() {
+        return age;
+    }
+    public String getGender() {
+        return gender;
+    }
     public String getName(){
         return name;
     }
@@ -38,9 +97,16 @@ public class Patient {
     public String[] getEncounters() {
         return encounters;
     }
+    public String[] getMedications() {
+        return medications;
+    }
 
 
     // Setter methods
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,6 +119,9 @@ public class Patient {
     public void setObservations(String[] observations) {
         this.observations = observations;
     }
+    public void setMedications(String[] medications) {
+        this.medications = medications;
+    }
     public void setGeneralPractitioner(String general_practitioner) {
         this.general_practitioner = general_practitioner;
     }
@@ -64,4 +133,45 @@ public class Patient {
     public void setDeceased(boolean deceased) {
         this.deceased = deceased;
     }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setCHF(boolean CHF) {
+        this.CHF = CHF;
+    }
+    public void setStroke(boolean stroke) {
+        this.stroke = stroke;
+    }
+    public void setDiabetes(boolean diabetes) {
+        this.diabetes = diabetes;
+    }
+    public void setVD(boolean VD) {
+        this.VD = VD;
+    }
+    public void setHypertension(boolean hypertension) {
+        this.hypertension = hypertension;
+    }
+    public void setAspirinClopidogrelNsaid(boolean acn){
+        aspirinClopidogrelNsaid = acn;
+    }
+    public void setRenalDisease(boolean rd) {
+        renalDisease = rd;
+    }
+    public void setLiverDisease(boolean ld) {
+        liverDisease = ld;
+    }
+    public void setPriorBleeding(boolean pb) {
+        priorBleeding = pb;
+    }
+    public void setHeavyDrinker(boolean heavyDrinker) {
+        this.heavyDrinker = heavyDrinker;
+    }
+    public void setLabileINR(boolean labileINR) {this.labileINR = labileINR;}
+    public void setChadsVasc(int chadsvasc) {
+        this.chadsvasc = chadsvasc;
+    }
+    public void setHasBled(int hasBled) {this.hasBled = hasBled;}
+    
 }

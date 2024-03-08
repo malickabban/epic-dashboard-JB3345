@@ -3,19 +3,12 @@ package com.backend;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
-import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import org.hl7.fhir.r4.model.Encounter;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Condition;
-import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
@@ -25,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.HashMap;
 
 
@@ -37,15 +33,17 @@ public class GetPatientsService {
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
         Bundle response = patientSearch("2011-01-01", "Smith");
-        return processPatients(response);
+        HashMap<String, com.backend.Patient> patients = processPatients(response);
+        calculateChadsVasc(patients);
+        return patients;
     }
+
 
     //This is where patient api call will be handled
     private Bundle patientSearch(String birthday, String practitionerName) {
         return client.search()
 		.forResource(Patient.class)
-		.where(Patient.BIRTHDATE.beforeOrEquals().day(birthday))
-		.and(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
+		.where(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
 				Organization.NAME.matches().value(practitionerName)))
 		.returnBundle(Bundle.class)
 		.execute();
@@ -65,12 +63,28 @@ public class GetPatientsService {
 
                 com.backend.Patient newPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
                 newPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
+                
+                addGender(current_patient, newPatient);
 
+                //for debugging, patient must have birthdate
+                if (current_patient.getBirthDate() != null) {
+                    addAge(current_patient, newPatient);
+                } else {
+                    System.out.println("No birth date information available for patient with ID: " + newPatient.getPatientID());
+                }
                 addConditions(current_patient, newPatient);
                 addEncounters(current_patient, newPatient);
                 addObservations(current_patient, newPatient);
                 addPractitioner(current_patient, newPatient);
-                
+                addMedications(current_patient, newPatient);
+                // Left because only 1 patient has medication, might want to test more in future
+                /*
+                if (newPatient.getMedications() != null) {
+                    for (String x : newPatient.getMedications()) {
+                        System.out.println(x);
+                    }
+                }
+                */
                 patientsMap.put(newPatient.getPatientID(), newPatient);
             }
             count++;
@@ -79,6 +93,49 @@ public class GetPatientsService {
             }
         }
         return patientsMap;
+    }
+
+    private void calculateChadsVasc(HashMap<String, com.backend.Patient> patients) {
+        for (com.backend.Patient patient : patients.values()) {
+            int chadsVascScore = 0;
+            
+            //C
+            if (patient.hasCHF()) {
+                chadsVascScore += 1;
+            }
+            ////H
+            if (patient.hasHypertension()) {
+                chadsVascScore += 1;
+            }
+            //A
+            if (patient.getAge() >= 75) {
+                chadsVascScore += 2;
+            }
+            //D
+            if (patient.hasDiabetes()) {
+                chadsVascScore += 1;
+            }
+            //S
+            if (patient.hasStroke()) {
+                chadsVascScore += 2;
+            }
+            //V
+            if (patient.hasVD()) {
+                chadsVascScore += 1;
+            }
+            //A
+            if (patient.getAge() >= 65 && patient.getAge() <= 74) {
+                chadsVascScore += 1;
+            }
+            //S
+            if (patient.getGender().equalsIgnoreCase("female")) {
+                chadsVascScore += 1;
+            }
+            System.out.println(patient.getAge());
+            System.out.println(patient.getGender());
+            System.out.println(chadsVascScore);
+            patient.setChadsVasc(chadsVascScore);
+        }
     }
 
     private void addObservations(Patient current_patient, com.backend.Patient newPatient) {
@@ -139,14 +196,76 @@ public class GetPatientsService {
         }
     }
     
+    private void addGender(Patient current_patient, com.backend.Patient newPatient) {
+        String sex = current_patient.getGenderElement().getValueAsString();
+        if (sex != null && !sex.isEmpty()) {
+            newPatient.setGender(sex);
+        } else {
+            newPatient.setGender("Unknown");
+        }
+    }
+
+
+    private void addAge(Patient current_patient, com.backend.Patient newPatient) {
+        LocalDate birthDate = current_patient.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentDate = LocalDate.now();
+        Period age = Period.between(birthDate, currentDate);
+        int years = age.getYears();
+        newPatient.setAge(years);
+    }
+    
+    
     private void addConditions(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
+            getChadsVascValues(c, newPatient);
             conditions.add(c.getCode().getText());
         }
         // If there are conditions add them to the patient
         if (conditions.size() != 0) {
             newPatient.setConditions((String[]) conditions.toArray(new String[conditions.size()]));
+        }
+    }
+
+    private void addMedications(Patient current_patient, com.backend.Patient newPatient) {
+        ArrayList<String> medications = new ArrayList<String>();
+        for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
+            CodeableConcept m = (CodeableConcept) (c.getMedication());
+            medications.add(m.getText());
+        }
+        // If there are conditions add them to the patient
+        if (medications.size() != 0) {
+            newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
+        }
+    }
+    private void getChadsVascValues(Condition condition, com.backend.Patient newPatient) {
+        if (condition.getCode().getCodingFirstRep().getDisplay() == null) {
+            return;
+        }
+        String codeDisplay = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
+        if (codeDisplay == null) {
+            return;
+        }
+        if (codeDisplay.contains("congestive heart failure")) {
+            newPatient.setCHF(true);
+            return;
+        }
+        //need to check if these conditions are right
+        if (codeDisplay.contains("stroke") || codeDisplay.contains("transient ischemic attack") || codeDisplay.contains("embolism")) {
+            newPatient.setStroke(true);
+            return;
+        }
+        if (codeDisplay.contains("diabetes")) {
+            newPatient.setDiabetes(true);
+            return;
+        }
+        if (codeDisplay.contains("vascular disease")) {
+            newPatient.setVD(true);
+            return;
+        }
+        if (codeDisplay.contains("hypertension")) {
+            newPatient.setHypertension(true);
+            return;
         }
     }
 
