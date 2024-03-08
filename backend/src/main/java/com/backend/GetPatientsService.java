@@ -139,9 +139,6 @@ public class GetPatientsService {
             if (patient.getGender().equalsIgnoreCase("female")) {
                 chadsVascScore += 1;
             }
-            //System.out.println(patient.getAge());
-            //System.out.println(patient.getGender());
-            //System.out.println(chadsVascScore);
             patient.setChadsVasc(chadsVascScore);
         }
     }
