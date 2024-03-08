@@ -86,6 +86,12 @@ public class GetPatientsService {
                     }
                 }
                 */
+                  // After all patient data is processed, evaluate RCRI values
+                evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
+
+                // Then, calculate the RCRI score based on the evaluated criteria
+                calculateRCRIScore(newPatient); // This calculates and assigns the RCRI score to the patient
+                
                 patientsMap.put(newPatient.getPatientID(), newPatient);
             }
             count++;
@@ -95,7 +101,6 @@ public class GetPatientsService {
         }
         return patientsMap;
     }
-    // Cacluating RCRI
 
 
     private void calculateChadsVasc(HashMap<String, com.backend.Patient> patients) {
@@ -134,30 +139,53 @@ public class GetPatientsService {
             if (patient.getGender().equalsIgnoreCase("female")) {
                 chadsVascScore += 1;
             }
-            System.out.println(patient.getAge());
-            System.out.println(patient.getGender());
-            System.out.println(chadsVascScore);
             patient.setChadsVasc(chadsVascScore);
         }
     }
+
+    private void calculateRCRIScore(com.backend.Patient newPatient) {
+
+        int rcriScore = 0;
+
+        // High-risk surgery
+        if (newPatient.isUndergoingHighRiskSurgery()) rcriScore++;
+
+        // History of ischemic heart disease
+        if (newPatient.isIschemicHeartDisease()) rcriScore++;
+
+        // History of congestive heart failure
+        if (newPatient.hasCHF()) rcriScore++;
+
+        // History of cerebrovascular disease
+        if (newPatient.isCerebrovascularDisease()) rcriScore++;
+
+        // Diabetes mellitus on insulin
+        if (newPatient.isOnPreOperativeInsulin()) rcriScore++;
+
+        // Preoperative serum creatinine > 2.0 mg/dL
+        if (newPatient.isPreOperativeCreatinineAboveTwo()) rcriScore++;
+
+        // Set the calculated RCRI score for the patient
+        newPatient.setRCRIScore(rcriScore);
+
+        // Print statements for checking criteria (if needed)
+        System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
+        System.out.println("Undergoing High-risk Surgery: " + newPatient.isUndergoingHighRiskSurgery());
+        System.out.println("History of Ischemic Heart Disease: " + newPatient.isIschemicHeartDisease());
+        System.out.println("History of Congestive Heart Failure: " + newPatient.hasCHF());
+        System.out.println("History of Cerebrovascular Disease: " + newPatient.isCerebrovascularDisease());
+        System.out.println("Diabetes Mellitus on Insulin: " + newPatient.isOnPreOperativeInsulin());
+        System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + newPatient.isPreOperativeCreatinineAboveTwo());
+        System.out.println("Final RCRI Score: " + rcriScore + "\n");
+        
+    }
+    
+
     // Method for adding observations
     private void addObservations(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> observations= new ArrayList<String>();
         for (Observation o : getResourcesForPatient(client, Observation.class, current_patient.getId())){
             observations.add(o.getCode().getText());
-
-            // Creatinine Level Check
-            CodeableConcept concept = o.getCode();
-            if (concept.hasCoding()) {
-                for (Coding coding : concept.getCoding()) {
-                    if (coding.getDisplay() != null && coding.getDisplay().toLowerCase().contains("creatinine")) {
-                        Quantity quantity = o.getValueQuantity();
-                        if (quantity != null && quantity.getValue().compareTo(new BigDecimal("2.0")) > 0) {
-                            newPatient.setPreOperativeCreatinineAboveTwo(true);
-                        }
-                    }
-                }
-            }
         }
         if (observations.size() != 0) {
             newPatient.setObservations((String[]) observations.toArray(new String[observations.size()])); 
@@ -234,21 +262,6 @@ public class GetPatientsService {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
             getChadsVascValues(c, newPatient);
-            String conditionDisplay = "";
-            if (c.getCode().getCodingFirstRep().getDisplay() != null) {
-                conditionDisplay = c.getCode().getCodingFirstRep().getDisplay().toLowerCase();
-            }
-
-            // Ischemic Heart Disease
-            if (conditionDisplay.contains("ischemic heart disease") || conditionDisplay.contains("myocardial infarction")) {
-                newPatient.setIschemicHeartDisease(true);
-            }
-            
-            // Cerebrovascular Disease
-            if (conditionDisplay.contains("cerebrovascular accident") || conditionDisplay.contains("stroke") || conditionDisplay.contains("transient ischemic attack")) {
-                newPatient.setCerebrovascularDisease(true);
-            }
-
             conditions.add(c.getCode().getText());
         }
         // If there are conditions add them to the patient
@@ -262,11 +275,6 @@ public class GetPatientsService {
         for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
             CodeableConcept m = (CodeableConcept) (c.getMedication());
             medications.add(m.getText());
-
-            // Check for Insulin 
-            if (m.getText().toLowerCase().contains("insulin")) {
-                newPatient.setOnPreOperativeInsulin(true);
-            }
         }
         // If there are conditions add them to the patient
         if (medications.size() != 0) {
@@ -304,6 +312,49 @@ public class GetPatientsService {
             return;
         }
     }
+    private void evaluateRCRIValues(Patient current_patient, com.backend.Patient newPatient) {
+        // Conditions
+        List<Condition> conditions = getResourcesForPatient(client, Condition.class, current_patient.getId());
+        for (Condition condition : conditions) {
+            if (condition.getCode().hasCoding() && condition.getCode().getCodingFirstRep().hasDisplay()) {
+                String display = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
+                
+                if (display.contains("ischemic heart disease") || display.contains("myocardial infarction")) {
+                    newPatient.setIschemicHeartDisease(true);
+                }
+                if (display.contains("congestive heart failure")) {
+                    newPatient.setCHF(true);
+                }
+                if (display.contains("cerebrovascular disease") || display.contains("stroke") || display.contains("transient ischemic attack")) {
+                    newPatient.setCerebrovascularDisease(true);
+                }
+            }
+        }
+    
+        // Medications for Diabetes on Insulin
+        List<MedicationStatement> medicationStatements = getResourcesForPatient(client, MedicationStatement.class, current_patient.getId());
+        for (MedicationStatement ms : medicationStatements) {
+            if (ms.getMedicationCodeableConcept().hasText() && ms.getMedicationCodeableConcept().getText().toLowerCase().contains("insulin")) {
+                newPatient.setOnPreOperativeInsulin(true);
+            }
+        }
+    
+        // Observations for Creatinine
+        List<Observation> observations = getResourcesForPatient(client, Observation.class, current_patient.getId());
+        for (Observation observation : observations) {
+            if (observation.getCode().hasCoding()) {
+                for (Coding coding : observation.getCode().getCoding()) {
+                    if (coding.hasDisplay() && coding.getDisplay().toLowerCase().contains("creatinine") && observation.hasValueQuantity()) {
+                        BigDecimal creatinineValue = observation.getValueQuantity().getValue();
+                        if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
+                            newPatient.setPreOperativeCreatinineAboveTwo(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
 
     private void addPractitioner(Patient current_patient, com.backend.Patient newPatient) {
         try {
