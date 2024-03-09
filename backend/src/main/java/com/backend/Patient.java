@@ -8,12 +8,19 @@ public class Patient {
     private boolean deceased;
     private String gender;
     private int chadsvasc;
+    private int hasBled;
     private int RCRI;
     private boolean CHF = false;
     private boolean stroke = false;
     private boolean diabetes = false;
     private boolean VD = false;
     private boolean hypertension = false;
+    private boolean aspirinClopidogrelNsaid = false;
+    private boolean renalDisease = false;
+    private boolean liverDisease = false;
+    private boolean priorBleeding = false;
+    private boolean heavyDrinker = false;
+    private boolean labileINR = false;
     private boolean ischemicHeartDisease = false;
     private boolean cerebrovascularDisease = false;
     private boolean onPreOperativeInsulin = false;
@@ -65,6 +72,27 @@ public class Patient {
     }
     public boolean hasHypertension() {
         return hypertension;
+    }
+    public boolean hasAspirinClopidogrelNsaid(){
+        return aspirinClopidogrelNsaid;
+    }
+    public boolean hasRenalDisease() {
+        return renalDisease;
+    }
+    public boolean hasLiverDisease() {
+        return liverDisease;
+    }
+    public boolean hasPriorBleeding() {
+        return priorBleeding;
+    }
+    public boolean hasLabileINR() {
+        return labileINR;
+    }
+    public int getHasBled() {
+        return hasBled;
+    }
+    public boolean isHeavyDrinker() {
+        return heavyDrinker;
     }
     public int getAge() {
         return age;
@@ -152,9 +180,27 @@ public class Patient {
     public void setHypertension(boolean hypertension) {
         this.hypertension = hypertension;
     }
+    public void setAspirinClopidogrelNsaid(boolean acn){
+        aspirinClopidogrelNsaid = acn;
+    }
+    public void setRenalDisease(boolean rd) {
+        renalDisease = rd;
+    }
+    public void setLiverDisease(boolean ld) {
+        liverDisease = ld;
+    }
+    public void setPriorBleeding(boolean pb) {
+        priorBleeding = pb;
+    }
+    public void setHeavyDrinker(boolean heavyDrinker) {
+        this.heavyDrinker = heavyDrinker;
+    }
+    public void setLabileINR(boolean labileINR) {this.labileINR = labileINR;}
     public void setChadsVasc(int chadsvasc) {
         this.chadsvasc = chadsvasc;
     }
+    public void setHasBled(int hasBled) {this.hasBled = hasBled;}
+    
     public void setRCRIScore(int RCRI) {
         this.RCRI = RCRI;
     }

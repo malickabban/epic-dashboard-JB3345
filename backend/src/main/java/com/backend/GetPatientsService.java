@@ -36,6 +36,7 @@ public class GetPatientsService {
         Bundle response = patientSearch("2011-01-01", "Smith");
         HashMap<String, com.backend.Patient> patients = processPatients(response);
         calculateChadsVasc(patients);
+        calculateHasBled(patients);
         return patients;
     }
 
@@ -78,6 +79,7 @@ public class GetPatientsService {
                 addObservations(current_patient, newPatient);
                 addPractitioner(current_patient, newPatient);
                 addMedications(current_patient, newPatient);
+                
                 // Left because only 1 patient has medication, might want to test more in future
                 /*
                 if (newPatient.getMedications() != null) {
@@ -100,6 +102,50 @@ public class GetPatientsService {
             }
         }
         return patientsMap;
+    }
+    private void calculateHasBled(HashMap<String, com.backend.Patient> patients) {
+        for (com.backend.Patient patient : patients.values()) {
+            int hasBledScore = 0;
+
+            if (patient.hasHypertension()) {
+                hasBledScore += 1;
+                System.out.println("Hyper");
+            }
+            if (patient.getAge() >= 65) {
+                hasBledScore += 1;
+                System.out.println("Age");
+            }
+            if (patient.hasRenalDisease()) {
+                hasBledScore += 1;
+                System.out.println("Renal");
+            }
+            if (patient.hasStroke()) {
+                hasBledScore += 1;
+                System.out.println("Stroke");
+            }
+            if (patient.hasLiverDisease()) {
+                hasBledScore += 1;
+                System.out.println("Liver");
+            }
+            if (patient.hasPriorBleeding()) {
+                hasBledScore += 1;
+                System.out.println("Bleed");
+            }
+            if (patient.hasLabileINR()) {
+                hasBledScore += 1;
+                System.out.println("INR");
+            }
+            if (patient.hasAspirinClopidogrelNsaid()) {
+                hasBledScore += 1;
+                System.out.println("Aspirin");
+            }
+            if (patient.isHeavyDrinker()) {
+                hasBledScore += 1;
+                System.out.println("Drinker");
+            }
+            System.out.println("HasBled: " + hasBledScore);
+            patient.setHasBled(hasBledScore);
+        }
     }
 
 
@@ -186,6 +232,14 @@ public class GetPatientsService {
         ArrayList<String> observations= new ArrayList<String>();
         for (Observation o : getResourcesForPatient(client, Observation.class, current_patient.getId())){
             observations.add(o.getCode().getText());
+            getObservationValues(o,newPatient);
+            //For future testing
+            /*
+            if (o.hasValueQuantity()) {
+                System.out.println(o.getCode().getText());
+                System.out.println(o.getValueQuantity().getValue());
+            }
+             */
         }
         if (observations.size() != 0) {
             newPatient.setObservations((String[]) observations.toArray(new String[observations.size()])); 
@@ -261,7 +315,7 @@ public class GetPatientsService {
     private void addConditions(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
-            getChadsVascValues(c, newPatient);
+            getConditionValues(c, newPatient);
             conditions.add(c.getCode().getText());
         }
         // If there are conditions add them to the patient
@@ -275,14 +329,14 @@ public class GetPatientsService {
         for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
             CodeableConcept m = (CodeableConcept) (c.getMedication());
             medications.add(m.getText());
+            getMedicationValues(m.getText(), newPatient);
         }
         // If there are conditions add them to the patient
         if (medications.size() != 0) {
             newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
         }
     }
-    
-    private void getChadsVascValues(Condition condition, com.backend.Patient newPatient) {
+    private void getConditionValues(Condition condition, com.backend.Patient newPatient) {
         if (condition.getCode().getCodingFirstRep().getDisplay() == null) {
             return;
         }
@@ -303,12 +357,63 @@ public class GetPatientsService {
             newPatient.setDiabetes(true);
             return;
         }
-        if (codeDisplay.contains("vascular disease")) {
+        if (codeDisplay.contains("vascular disease") || codeDisplay.contains("vasculardisease")) {
             newPatient.setVD(true);
             return;
         }
         if (codeDisplay.contains("hypertension")) {
             newPatient.setHypertension(true);
+            return;
+        }
+        if (codeDisplay.contains("renal disease")) {
+            newPatient.setRenalDisease(true);
+            return;
+        }
+        if (codeDisplay.contains("liver disease")) {
+            newPatient.setLiverDisease(true);
+            return;
+        }
+        if (codeDisplay.contains("bleeding")) {
+            newPatient.setHypertension(true);
+            return;
+        }
+
+    }
+
+    private void getMedicationValues(String medication, com.backend.Patient newPatient) {
+        if (medication == null) {
+            return;
+        }
+        String codeDisplay = medication.toLowerCase();
+        if (codeDisplay == null) {
+            return;
+        }
+        if (codeDisplay.contains("aspirin") || codeDisplay.contains("nsaid") || codeDisplay.contains("clopidogrel")) {
+            newPatient.setAspirinClopidogrelNsaid(true);
+            return;
+        }
+    }
+
+    private void getObservationValues(Observation observation, com.backend.Patient newPatient) {
+        if (observation == null) {
+            return;
+        }
+        String codeDisplay = observation.getCode().toString().toLowerCase();
+        if (codeDisplay == null) {
+            return;
+        }
+        if (codeDisplay.contains("inr")) {
+            double inrvalue = observation.hasValueQuantity() ? observation.getValueQuantity().getValue().doubleValue() : 100;
+            if((inrvalue < 60 && inrvalue > 1) || (inrvalue < 0.6)) {
+                newPatient.setLabileINR(true);
+            }
+            if(observation.hasValueRatio() && observation.getValueRatio().getNumerator().getValue().divide(observation.getValueRatio().getDenominator().getValue()).doubleValue() < 0.6) {
+                newPatient.setLabileINR(true);
+            }
+            return;
+        }
+        if (((codeDisplay.contains("drinking") || codeDisplay.contains("drinker")) && codeDisplay.contains("heavy")) || (codeDisplay.contains("alcohol") && codeDisplay.contains("week") && observation.hasValueQuantity() && observation.getValueQuantity().getValue().doubleValue() >= 8)) {
+            newPatient.setHeavyDrinker(true);
             return;
         }
     }
