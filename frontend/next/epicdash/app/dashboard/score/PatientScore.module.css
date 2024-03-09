@@ -1,0 +1,44 @@
+.container{
+    background-color: var(--bgSoft);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  .top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table{
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    table-layout:fixed;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  .td {
+    table-layout:fixed;
+    width:20px;
+    text-align: center;
+  }
+  .tf {
+    table-layout:fixed;
+    width:20px;
+    padding-top: 5px;
+    padding-left: 5px;
+  }
+  .addButton{
+    padding: 10px;
+    background-color: #3a34a3;
+    color: var(--text);
+    border: none;
+    border-radius: 10px;
+    cursor: auto;
+  }
+  
+  .addButton:hover,
+  .active {
+    background-color: #15124d;
+  }

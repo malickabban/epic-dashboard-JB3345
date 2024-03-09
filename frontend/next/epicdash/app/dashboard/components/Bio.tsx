@@ -34,12 +34,16 @@ const Bio = (input: bioInput) => {
               />
                 }
               </div>
+              {!bioActive &&
             <div className="block h-[300px] align-middle overflow-auto" id="bioCard">
-              <p className="ml-1 mt-20">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+              <p className="ml-1 mt-10">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+              <p className="ml-1">Age: {selectedPatient && selectedPatient.age ? selectedPatient.age : ""}</p>
+              <p className="ml-1">Gender: {selectedPatient && selectedPatient.gender ? selectedPatient.gender : ""}</p>
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
               <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
               <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
               </div>
+              }
         </div>
     )
 }
