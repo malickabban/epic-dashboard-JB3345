@@ -31,22 +31,50 @@ public class GetPatientsService {
     private final FhirContext ctx = FhirContext.forR4Cached();
     private final IGenericClient client = ctx.newRestfulGenericClient("https://hapi.fhir.org/baseR4");
 
+    //Patients with scores of chadsvasc of 2 and a hasbled of 1
+    private final String[] demoSamplePatientIDs = 
+    {"30163", "42024", "1da75dde", "156324b", "35becbd4"};
+
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
-        Bundle response = patientSearch("2011-01-01", "Smith");
-        HashMap<String, com.backend.Patient> patients = processPatients(response);
-        calculateChadsVasc(patients);
-        calculateHasBled(patients);
-        return patients;
+        Bundle randomPatientResponse = patientRandomSearch();
+        Bundle samplePatientResponse = samplePatientSearch();
+
+        HashMap<String, com.backend.Patient> randomPatients = processPatients(randomPatientResponse);
+        HashMap<String, com.backend.Patient> samplePatient = processPatients(samplePatientResponse);
+        randomPatients.putAll(samplePatient);
+        calculateChadsVasc(randomPatients);
+        calculateHasBled(randomPatients);
+        return randomPatients;
     }
 
 
+    private Bundle samplePatientSearch(){
+
+        Bundle bundle = new Bundle().setType(Bundle.BundleType.SEARCHSET);
+
+        
+        for (String samplePatientID : demoSamplePatientIDs) {
+            Bundle searchBundle = client.search()
+                    .forResource(Patient.class)
+                    .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(null, samplePatientID))
+                    .returnBundle(Bundle.class)
+                    .execute();
+            bundle.addEntry().setResource(searchBundle.getEntryFirstRep().getResource());
+        }
+    // System.out.println("\n CHECK OUT THIS BUNDLE: " + bundle.getEntry().get(0).getResource().toString());
+
+    // System.out.println("Okay we just got this guy " + " " + samplePatientID + "\n");
+
+    return bundle;
+    }
+
     //This is where patient api call will be handled
-    private Bundle patientSearch(String birthday, String practitionerName) {
+    private Bundle patientRandomSearch() {
         return client.search()
-		.forResource(Patient.class)
-		.where(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
-				Organization.NAME.matches().value(practitionerName)))
+		.forResource(Patient.class).count(1)
+		// .where(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
+		// 		Organization.NAME.matches().value(practitionerName)))
 		.returnBundle(Bundle.class)
 		.execute();
     }
