@@ -1,7 +1,7 @@
 "use client"
 import { createContext, useState } from "react"
-import type {PatientMap, Patient} from "./dashboard/page"
-import type {scoreMap} from "./dashboard/score/page"
+import type {PatientMap, Patient} from "./Types"
+import type {scoreMap} from "./Types"
 export type patientContextType = {
     displayedPatients: PatientMap | null,
     setDisplayedPatients: (value: PatientMap | null) => void,
@@ -27,6 +27,7 @@ export const PatientContext = createContext<patientContextType | null>(null);
 //This file ensures that all of the information can be saved between the two pages of the diagram
 
 const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
+
     const [displayedPatients, setDisplayedPatients] = useState<PatientMap | null>(null);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [conditionsActive, setConditionsActive] = useState(false);
@@ -34,6 +35,8 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [bioActive, setBioActive] = useState(false);
     const [observationsActive, setObservationsActive] = useState(false);
     const [basicActive, setBasicActive] = useState(false);
+
+    //resets the basic info view for changing the selected patient or deleting a patient
     const resetPatient = () => {
       const observationsCard = document.getElementById("observationsCard");
         const historyCard = document.getElementById("historyCard");

@@ -4,44 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
 import Search from "./components/Search";
 import BasicInfo from "./components/BasicInfo"
-import { useRouter } from 'next/navigation';
 import {PatientContext, patientContextType} from '../PatientContext'
-import Patient from "./patient/page";
+import {Patient, PatientMap, clonePatient} from "../Types";
 import Scores from "./components/Scores"
-export type Patient = {
-  // Define the structure of your JSON data here
-  // For example:
-  deceased: boolean;
-  name: string;
-  patientID: string;
-  generalPractitioner: string | null;
-  conditions : string[] | null;
-  observations : string[] | null;
-  encounters : string[] | null;
-  age: number | null;
-  gender: string | null;
-  rcri: number | null;
-  chadsvasc: number | null;
-  CHF: boolean | null;
-  hypertension : boolean | null;
-  stroke : boolean | null;
-  VD : boolean | null;
-  diabetes : boolean | null;
-  undergoingHighRiskSurgery : boolean | null;
-  preOperativeCreatinineAboveTwo: boolean | null;
-  onPreOperativeInsulin: boolean | null;
-  ischemicHeartDisease: boolean | null;
-  cerebrovascularDisease: boolean | null;
-  renalDisease : boolean | null;
-  liverDisease : boolean | null;
-  priorBleeding : boolean | null;
-  inr : boolean | null;
-  medicationBleeds : boolean | null;
-  alcoholUse : boolean | null;
-  hasBled : number | null;
-  // Add more properties as needed
-};
-export type PatientMap = Record<string, Patient>;
 
 const Dashboard: React.FC = () => {
   const { displayedPatients, selectedPatient, setDisplayedPatients,setSelectedPatient,
@@ -49,7 +14,7 @@ const Dashboard: React.FC = () => {
     basicActive, setBasicActive, bioActive, setBioActive, resetPatient} = useContext(PatientContext) as patientContextType
   const [data, setData] = useState<PatientMap | null>({});
   const [names, setNames] =  useState<PatientMap | null>(null); //For names of patients
-  const router = useRouter();
+
   //handles when the selected patient changes
   const handleButtonClick = (key: string) => {
     if (displayedPatients) {
@@ -66,8 +31,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  //resets the basic info view for changing the selected patient or deleting a patient
-
   //removes patient from displayed patients list and resets selected patient
   const handleRemovePatient = (key: string) => {
     if (displayedPatients && data) {
@@ -79,39 +42,7 @@ const Dashboard: React.FC = () => {
       setSelectedPatient(null);
     }
   };
-  const clonePatient = (data : Patient) => {
-    const t:Patient = {
-      name: data.name,
-      deceased: data.deceased,
-      generalPractitioner: data.generalPractitioner,
-      patientID: data.patientID,
-      conditions: data.conditions,
-      observations: data.observations,
-      encounters: data.encounters,
-      age: data.age,
-      gender: data.gender,
-      chadsvasc: 'chadsvasc' in data ? data.chadsvasc : null,
-      rcri: 'rcri' in data ? data.rcri : null,
-      CHF: 'CHF' in data ? data.CHF : null,
-      hypertension: 'hypertension' in data ? data.hypertension : null,
-      diabetes: 'diabetes' in data ? data.diabetes : null,
-      VD : 'VD' in data ? data.VD : null,
-      stroke : 'stroke' in data ? data.stroke : null,
-      undergoingHighRiskSurgery : data.undergoingHighRiskSurgery,
-      preOperativeCreatinineAboveTwo: data.preOperativeCreatinineAboveTwo,
-      onPreOperativeInsulin: data.onPreOperativeInsulin,
-      ischemicHeartDisease: data.ischemicHeartDisease,
-      cerebrovascularDisease: data.cerebrovascularDisease,
-      renalDisease : 'renalDisease' in data ? data.renalDisease : null,
-      liverDisease : 'liverDisease' in data ? data.liverDisease : null,
-      priorBleeding : 'priorBleeding' in data ? data.priorBleeding : null,
-      inr : 'inr' in data ? data.inr : null,
-      medicationBleeds : 'medicationBleeds' in data ? data.medicationBleeds : null,
-      alcoholUse : 'alcoholUse' in data ? data.alcoholUse : null,
-      hasBled : 'hasBled' in data ? data.hasBled : null
-    } 
-    return t;
-  }
+  
   //adds patient to displayed patient list
   const handleAddPatient = (key: string) => {
     if (displayedPatients && data && data[key] != undefined && displayedPatients[key] == undefined) {
@@ -159,6 +90,8 @@ const Dashboard: React.FC = () => {
       }
     };
     fetchData();
+
+    //Sets active patient when returning from Scores page.
     if (selectedPatient) {
       const next = document.getElementById(selectedPatient.patientID);
       const prev = document.getElementsByClassName("list-group-item border-left-0 cursor-pointer hover:bg-black hover:bg-opacity-10 active");

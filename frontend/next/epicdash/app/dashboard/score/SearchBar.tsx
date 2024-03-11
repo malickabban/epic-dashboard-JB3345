@@ -1,6 +1,6 @@
 import { MdSearch } from "react-icons/md"
 import styles from "./SearchBar.module.css"
-import type {Scores, scoreMap} from "../score/page"
+import type {scoreMap} from "../../Types"
 import { useState } from "react"
 export type SearchInput = {
     onSearch: (value: string) => void
