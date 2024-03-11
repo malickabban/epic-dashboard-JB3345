@@ -93,12 +93,22 @@ const PatientScore = () => {
       }
     }
   }
+
+  const handleDelete = () => {
+    if (selected && scores && searchValue in scores) {
+      const updatedScores = { ...scores };
+      delete updatedScores[searchValue];
+      setScores(updatedScores);
+    }
+  };
+  
   return (
     <div className={styles.container}>
       <h4>{name}</h4>
       <div className={styles.top}>
         <SearchBar placeholder="Search Patient Score..." onSearch={onSearch} current={current}/>
         <button className={styles.addButton} onClick={onAdd}>Add</button>
+        <button className={styles.addButton} onClick={handleDelete}>Delete</button>
       </div>
       {scores && Object.keys(scores).map((key) => (
         <table className={styles.table}>
