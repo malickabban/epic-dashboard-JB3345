@@ -24,6 +24,8 @@ export type patientContextType = {
 
 export const PatientContext = createContext<patientContextType | null>(null);
 
+//This file ensures that all of the information can be saved between the two pages of the diagram
+
 const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [displayedPatients, setDisplayedPatients] = useState<PatientMap | null>(null);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);

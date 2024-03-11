@@ -9,6 +9,9 @@ import { useRouter } from 'next/navigation';
 export type scoresInput = {
     selectedPatient: Patient | null
 }
+
+//The scores component on the main dashboard page.
+
 const Scores = (input: scoresInput) => {
     const {selectedPatient} = input;
     const router = useRouter();
@@ -28,7 +31,7 @@ const Scores = (input: scoresInput) => {
             </div>
             <div className="card text-center m-2">
             <p>HAS-BLED</p>
-            <p>{selectedPatient && selectedPatient.hasbled ? selectedPatient.hasbled : 0}</p>
+            <p>{selectedPatient && selectedPatient.hasBled ? selectedPatient.hasBled : 0}</p>
             </div>
             </div>
             }
