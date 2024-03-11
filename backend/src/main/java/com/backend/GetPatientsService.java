@@ -89,7 +89,7 @@ public class GetPatientsService {
         for (BundleEntryComponent entry : response.getEntry()) {
             // Retrieve the patient resource from each entry
             IBaseResource resource = entry.getResource();
-
+            //fix
             // Check if the resource is of type Patient
             if (resource instanceof Patient) {
                 Patient current_patient = (Patient) resource;
@@ -129,7 +129,7 @@ public class GetPatientsService {
                     count++;
                 }
             }
-            if (count == 6){
+            if (count == 7){
                 break;
             }
         }
