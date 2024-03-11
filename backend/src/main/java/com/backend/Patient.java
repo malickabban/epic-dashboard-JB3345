@@ -2,30 +2,30 @@ package com.backend;
 
 public class Patient {
 
-    private int age = 0;
-    private String name, general_practitioner;
-    private String patient_id;
-    private boolean deceased;
-    private String gender;
-    private int chadsvasc;
-    private int hasBled;
-    private int RCRI;
-    private boolean CHF = false;
-    private boolean stroke = false;
-    private boolean diabetes = false;
-    private boolean VD = false;
-    private boolean hypertension = false;
-    private boolean aspirinClopidogrelNsaid = false;
-    private boolean renalDisease = false;
-    private boolean liverDisease = false;
-    private boolean priorBleeding = false;
-    private boolean heavyDrinker = false;
-    private boolean labileINR = false;
-    private boolean ischemicHeartDisease = false;
-    private boolean cerebrovascularDisease = false;
-    private boolean onPreOperativeInsulin = false;
-    private boolean undergoingHighRiskSurgery = false;
-    private boolean preOperativeCreatinineAboveTwo = false;
+    public int age = 0;
+    public String name, general_practitioner;
+    public String patient_id;
+    public boolean deceased;
+    public String gender;
+    public int chadsvasc;
+    public int hasBled;
+    public int RCRI;
+    public boolean CHF;
+    public boolean stroke;
+    public boolean diabetes;
+    public boolean VD;
+    public boolean hypertension;
+    public boolean aspirinClopidogrelNsaid;
+    public boolean renalDisease;
+    public boolean liverDisease;
+    public boolean priorBleeding;
+    public boolean heavyDrinker;
+    public boolean labileINR;
+    public boolean ischemicHeartDisease;
+    public boolean cerebrovascularDisease;
+    public boolean onPreOperativeInsulin;
+    public boolean undergoingHighRiskSurgery;
+    public boolean preOperativeCreatinineAboveTwo;
 
     public String[] conditions;
     public String[] observations;
@@ -195,7 +195,9 @@ public class Patient {
     public void setHeavyDrinker(boolean heavyDrinker) {
         this.heavyDrinker = heavyDrinker;
     }
-    public void setLabileINR(boolean labileINR) {this.labileINR = labileINR;}
+    public void setLabileINR(boolean labileINR) {
+        this.labileINR = labileINR;
+    }
     public void setChadsVasc(int chadsvasc) {
         this.chadsvasc = chadsvasc;
     }
