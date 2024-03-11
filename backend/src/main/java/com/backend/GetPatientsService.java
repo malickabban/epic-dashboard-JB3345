@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.HashMap;
-import java.util.HashSet;
 
 
 @Component
@@ -38,51 +37,49 @@ public class GetPatientsService {
 
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
-        Bundle randomPatientResponse = patientRandomSearch("2011-01-01", "Smith");
-        //Bundle samplePatientResponse = samplePatientSearch();
+        Bundle randomPatientResponse = patientRandomSearch();
+        Bundle samplePatientResponse = samplePatientSearch();
 
         HashMap<String, com.backend.Patient> randomPatients = processPatients(randomPatientResponse);
-        ///HashMap<String, com.backend.Patient> samplePatient = processPatients(samplePatientResponse);
-        //randomPatients.putAll(samplePatient);
+        HashMap<String, com.backend.Patient> samplePatient = processPatients(samplePatientResponse);
+        randomPatients.putAll(samplePatient);
         calculateChadsVasc(randomPatients);
         calculateHasBled(randomPatients);
-        calculateRCRIScore(randomPatients);
         return randomPatients;
     }
 
 
-    //private Bundle samplePatientSearch(){
+    private Bundle samplePatientSearch(){
 
-    ////    Bundle bundle = new Bundle().setType(Bundle.BundleType.SEARCHSET);
+        Bundle bundle = new Bundle().setType(Bundle.BundleType.SEARCHSET);
 
         
-    //    for (String samplePatientID : demoSamplePatientIDs) {
-    //        Bundle searchBundle = client.search()
-    //                .forResource(Patient.class)
-    //                .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(null, samplePatientID))
-    //                .returnBundle(Bundle.class)
-    //                .execute();
-    //        bundle.addEntry().setResource(searchBundle.getEntryFirstRep().getResource());
-    //    }
+        for (String samplePatientID : demoSamplePatientIDs) {
+            Bundle searchBundle = client.search()
+                    .forResource(Patient.class)
+                    .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(null, samplePatientID))
+                    .returnBundle(Bundle.class)
+                    .execute();
+            bundle.addEntry().setResource(searchBundle.getEntryFirstRep().getResource());
+        }
     // System.out.println("\n CHECK OUT THIS BUNDLE: " + bundle.getEntry().get(0).getResource().toString());
 
     // System.out.println("Okay we just got this guy " + " " + samplePatientID + "\n");
 
-    //return bundle;
-    //}
+    return bundle;
+    }
 
     //This is where patient api call will be handled
-    private Bundle patientRandomSearch(String birthday, String practitionerName) {
+    private Bundle patientRandomSearch() {
         return client.search()
-		.forResource(Patient.class).count(100)
-		.where(Patient.GENERAL_PRACTITIONER.hasChainedProperty(Organization.NAME.matches().value(practitionerName)))
+		.forResource(Patient.class).count(1)
+		// .where(Patient.GENERAL_PRACTITIONER.hasChainedProperty(
+		// 		Organization.NAME.matches().value(practitionerName)))
 		.returnBundle(Bundle.class)
 		.execute();
     }
-	//Creating the patient objects will go here. For each api call to get data (condition, encounter, etc) a new method is used
-
+	//Creating the patient objects will go here. For each api call to get data (condition, encounter, etc) a new method is used	
     private HashMap<String, com.backend.Patient> processPatients(Bundle response) {
-        HashSet<String> processedNames = new HashSet<>();
         HashMap<String, com.backend.Patient> patientsMap = new HashMap<>();
         int count = 0;
 
@@ -93,43 +90,42 @@ public class GetPatientsService {
             // Check if the resource is of type Patient
             if (resource instanceof Patient) {
                 Patient current_patient = (Patient) resource;
-                String patientName = current_patient.getNameFirstRep().getNameAsSingleString();
+
                 com.backend.Patient newPatient = new com.backend.Patient(current_patient.getNameFirstRep().getNameAsSingleString());
                 newPatient.setPatientId(current_patient.getIdentifierFirstRep().toString().split("@")[1]);
-                if (!processedNames.contains(patientName)) { 
                 
-                    addGender(current_patient, newPatient);
+                addGender(current_patient, newPatient);
 
-                    //for debugging, patient must have birthdate
-                    if (current_patient.getBirthDate() != null) {
-                        addAge(current_patient, newPatient);
-                    } else {
-                        System.out.println("No birth date information available for patient with ID: " + newPatient.getPatientID());
-                    }
-                    addConditions(current_patient, newPatient);
-                    addEncounters(current_patient, newPatient);
-                    addObservations(current_patient, newPatient);
-                    addPractitioner(current_patient, newPatient);
-                    addMedications(current_patient, newPatient);
-                
-                    // Left because only 1 patient has medication, might want to test more in future
-                    /*
-                    if (newPatient.getMedications() != null) {
-                        for (String x : newPatient.getMedications()) {
-                            System.out.println(x);
-                        }
-                    }
-                    */
-                         // After all patient data is processed, evaluate RCRI values
-                    evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
-
-                    // Then, calculate the RCRI score based on the evaluated criteria
-                    processedNames.add(patientName);
-                    patientsMap.put(newPatient.getPatientID(), newPatient);
-                    count++;
+                //for debugging, patient must have birthdate
+                if (current_patient.getBirthDate() != null) {
+                    addAge(current_patient, newPatient);
+                } else {
+                    System.out.println("No birth date information available for patient with ID: " + newPatient.getPatientID());
                 }
+                addConditions(current_patient, newPatient);
+                addEncounters(current_patient, newPatient);
+                addObservations(current_patient, newPatient);
+                addPractitioner(current_patient, newPatient);
+                addMedications(current_patient, newPatient);
+                
+                // Left because only 1 patient has medication, might want to test more in future
+                /*
+                if (newPatient.getMedications() != null) {
+                    for (String x : newPatient.getMedications()) {
+                        System.out.println(x);
+                    }
+                }
+                */
+                  // After all patient data is processed, evaluate RCRI values
+                evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
+
+                // Then, calculate the RCRI score based on the evaluated criteria
+                calculateRCRIScore(newPatient); // This calculates and assigns the RCRI score to the patient
+                
+                patientsMap.put(newPatient.getPatientID(), newPatient);
             }
-            if (count == 6){
+            count++;
+            if (count == 10){
                 break;
             }
         }
@@ -138,46 +134,45 @@ public class GetPatientsService {
     private void calculateHasBled(HashMap<String, com.backend.Patient> patients) {
         for (com.backend.Patient patient : patients.values()) {
             int hasBledScore = 0;
-            System.out.println(patient.getName());
-            System.out.println(patient.hasStroke());
+
             if (patient.hasHypertension()) {
                 hasBledScore += 1;
-                //System.out.println("Hyper");
+                System.out.println("Hyper");
             }
             if (patient.getAge() >= 65) {
                 hasBledScore += 1;
-                //System.out.println("Age");
+                System.out.println("Age");
             }
             if (patient.hasRenalDisease()) {
                 hasBledScore += 1;
-                //System.out.println("Renal");
+                System.out.println("Renal");
             }
             if (patient.hasStroke()) {
                 hasBledScore += 1;
-                //System.out.println("Stroke");
+                System.out.println("Stroke");
             }
             if (patient.hasLiverDisease()) {
                 hasBledScore += 1;
-                //System.out.println("Liver");
+                System.out.println("Liver");
             }
             if (patient.hasPriorBleeding()) {
                 hasBledScore += 1;
-                //System.out.println("Bleed");
+                System.out.println("Bleed");
             }
             if (patient.hasLabileINR()) {
                 hasBledScore += 1;
-                //System.out.println("INR");
+                System.out.println("INR");
             }
             if (patient.hasAspirinClopidogrelNsaid()) {
                 hasBledScore += 1;
-                //System.out.println("Aspirin");
+                System.out.println("Aspirin");
             }
             if (patient.isHeavyDrinker()) {
                 hasBledScore += 1;
-                //System.out.println("Drinker");
+                System.out.println("Drinker");
             }
+            System.out.println("HasBled: " + hasBledScore);
             patient.setHasBled(hasBledScore);
-            System.out.println("HasBled: " + patient.hasBled);
         }
     }
 
@@ -185,6 +180,7 @@ public class GetPatientsService {
     private void calculateChadsVasc(HashMap<String, com.backend.Patient> patients) {
         for (com.backend.Patient patient : patients.values()) {
             int chadsVascScore = 0;
+            
             //C
             if (patient.hasCHF()) {
                 chadsVascScore += 1;
@@ -203,7 +199,6 @@ public class GetPatientsService {
             }
             //S
             if (patient.hasStroke()) {
-                System.out.println("Stroke");
                 chadsVascScore += 2;
             }
             //V
@@ -222,40 +217,41 @@ public class GetPatientsService {
         }
     }
 
-    private void calculateRCRIScore(HashMap<String, com.backend.Patient> patients) {
-        for (com.backend.Patient patient : patients.values()) {
-            int rcriScore = 0;
-            // High-risk surgery
-            if (patient.isUndergoingHighRiskSurgery()) rcriScore++;
+    private void calculateRCRIScore(com.backend.Patient newPatient) {
 
-            // History of ischemic heart disease
-            if (patient.isIschemicHeartDisease()) rcriScore++;
+        int rcriScore = 0;
 
-            // History of congestive heart failure
-            if (patient.hasCHF()) rcriScore++;
+        // High-risk surgery
+        if (newPatient.isUndergoingHighRiskSurgery()) rcriScore++;
 
-            // History of cerebrovascular disease
-            if (patient.isCerebrovascularDisease()) rcriScore++;
+        // History of ischemic heart disease
+        if (newPatient.isIschemicHeartDisease()) rcriScore++;
 
-            // Diabetes mellitus on insulin
-            if (patient.isOnPreOperativeInsulin()) rcriScore++;
+        // History of congestive heart failure
+        if (newPatient.hasCHF()) rcriScore++;
 
-            // Preoperative serum creatinine > 2.0 mg/dL
-            if (patient.isPreOperativeCreatinineAboveTwo()) rcriScore++;
+        // History of cerebrovascular disease
+        if (newPatient.isCerebrovascularDisease()) rcriScore++;
 
-            // Set the calculated RCRI score for the patient
-            patient.setRCRIScore(rcriScore);
+        // Diabetes mellitus on insulin
+        if (newPatient.isOnPreOperativeInsulin()) rcriScore++;
 
-            // Print statements for checking criteria (if needed)
-            ////System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
-            ////System.out.println("Undergoing High-risk Surgery: " + newPatient.isUndergoingHighRiskSurgery());
-            ////System.out.println("History of Ischemic Heart Disease: " + newPatient.isIschemicHeartDisease());
-            ////System.out.println("History of Congestive Heart Failure: " + newPatient.hasCHF());
-            ////System.out.println("History of Cerebrovascular Disease: " + newPatient.isCerebrovascularDisease());
-            ////System.out.println("Diabetes Mellitus on Insulin: " + newPatient.isOnPreOperativeInsulin());
-            ////System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + newPatient.isPreOperativeCreatinineAboveTwo());
-            ////System.out.println("Final RCRI Score: " + rcriScore + "\n");
-        }  
+        // Preoperative serum creatinine > 2.0 mg/dL
+        if (newPatient.isPreOperativeCreatinineAboveTwo()) rcriScore++;
+
+        // Set the calculated RCRI score for the patient
+        newPatient.setRCRIScore(rcriScore);
+
+        // Print statements for checking criteria (if needed)
+        System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
+        System.out.println("Undergoing High-risk Surgery: " + newPatient.isUndergoingHighRiskSurgery());
+        System.out.println("History of Ischemic Heart Disease: " + newPatient.isIschemicHeartDisease());
+        System.out.println("History of Congestive Heart Failure: " + newPatient.hasCHF());
+        System.out.println("History of Cerebrovascular Disease: " + newPatient.isCerebrovascularDisease());
+        System.out.println("Diabetes Mellitus on Insulin: " + newPatient.isOnPreOperativeInsulin());
+        System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + newPatient.isPreOperativeCreatinineAboveTwo());
+        System.out.println("Final RCRI Score: " + rcriScore + "\n");
+        
     }
     
 
@@ -363,7 +359,7 @@ public class GetPatientsService {
             medications.add(m.getText());
             getMedicationValues(m.getText(), newPatient);
         }
-        // If there are medications add them to the patient
+        // If there are conditions add them to the patient
         if (medications.size() != 0) {
             newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
         }
