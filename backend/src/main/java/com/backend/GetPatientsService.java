@@ -33,8 +33,8 @@ public class GetPatientsService {
     private final IGenericClient client = ctx.newRestfulGenericClient("https://hapi.fhir.org/baseR4");
 
     //Patients with scores of chadsvasc of 2 and a hasbled of 1
-    private final String[] demoSamplePatientIDs = 
-    {"30163", "42024", "1da75dde", "156324b", "35becbd4"};
+    //private final String[] demoSamplePatientIDs = 
+    //{"30163", "42024", "1da75dde", "156324b", "35becbd4"};
 
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
@@ -120,7 +120,7 @@ public class GetPatientsService {
                     }
                     */
                          // After all patient data is processed, evaluate RCRI values
-                    evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
+                    //evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
 
                     // Then, calculate the RCRI score based on the evaluated criteria
                     processedNames.add(patientName);
@@ -128,7 +128,7 @@ public class GetPatientsService {
                     count++;
                 }
             }
-            if (count == 10){
+            if (count == 8){
                 break;
             }
         }
@@ -140,39 +140,39 @@ public class GetPatientsService {
 
             if (patient.hasHypertension()) {
                 hasBledScore += 1;
-                System.out.println("Hyper");
+                //System.out.println("Hyper");
             }
             if (patient.getAge() >= 65) {
                 hasBledScore += 1;
-                System.out.println("Age");
+                //System.out.println("Age");
             }
             if (patient.hasRenalDisease()) {
                 hasBledScore += 1;
-                System.out.println("Renal");
+                //System.out.println("Renal");
             }
             if (patient.hasStroke()) {
                 hasBledScore += 1;
-                System.out.println("Stroke");
+                //System.out.println("Stroke");
             }
             if (patient.hasLiverDisease()) {
                 hasBledScore += 1;
-                System.out.println("Liver");
+                //System.out.println("Liver");
             }
             if (patient.hasPriorBleeding()) {
                 hasBledScore += 1;
-                System.out.println("Bleed");
+                //System.out.println("Bleed");
             }
             if (patient.hasLabileINR()) {
                 hasBledScore += 1;
-                System.out.println("INR");
+                //System.out.println("INR");
             }
             if (patient.hasAspirinClopidogrelNsaid()) {
                 hasBledScore += 1;
-                System.out.println("Aspirin");
+                //System.out.println("Aspirin");
             }
             if (patient.isHeavyDrinker()) {
                 hasBledScore += 1;
-                System.out.println("Drinker");
+                //System.out.println("Drinker");
             }
             System.out.println("HasBled: " + hasBledScore);
             patient.setHasBled(hasBledScore);
@@ -407,6 +407,15 @@ public class GetPatientsService {
             newPatient.setHypertension(true);
             return;
         }
+        if (codeDisplay.contains("ischemic heart disease") || codeDisplay.contains("myocardial infarction")) {
+            newPatient.setIschemicHeartDisease(true);
+        }
+        if (codeDisplay.contains("congestive heart failure")) {
+            newPatient.setCHF(true);
+        }
+        if (codeDisplay.contains("cerebrovascular disease") || codeDisplay.contains("stroke") || codeDisplay.contains("transient ischemic attack")) {
+            newPatient.setCerebrovascularDisease(true);
+        }
 
     }
 
@@ -421,6 +430,9 @@ public class GetPatientsService {
         if (codeDisplay.contains("aspirin") || codeDisplay.contains("nsaid") || codeDisplay.contains("clopidogrel")) {
             newPatient.setAspirinClopidogrelNsaid(true);
             return;
+        }
+        if (codeDisplay.contains("insulin")) {
+            newPatient.setOnPreOperativeInsulin(true);
         }
     }
 
@@ -446,49 +458,55 @@ public class GetPatientsService {
             newPatient.setHeavyDrinker(true);
             return;
         }
-    }
-    private void evaluateRCRIValues(Patient current_patient, com.backend.Patient newPatient) {
-        // Conditions
-        List<Condition> conditions = getResourcesForPatient(client, Condition.class, current_patient.getId());
-        for (Condition condition : conditions) {
-            if (condition.getCode().hasCoding() && condition.getCode().getCodingFirstRep().hasDisplay()) {
-                String display = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
-                
-                if (display.contains("ischemic heart disease") || display.contains("myocardial infarction")) {
-                    newPatient.setIschemicHeartDisease(true);
-                }
-                if (display.contains("congestive heart failure")) {
-                    newPatient.setCHF(true);
-                }
-                if (display.contains("cerebrovascular disease") || display.contains("stroke") || display.contains("transient ischemic attack")) {
-                    newPatient.setCerebrovascularDisease(true);
-                }
-            }
-        }
-    
-        // Medications for Diabetes on Insulin
-        List<MedicationStatement> medicationStatements = getResourcesForPatient(client, MedicationStatement.class, current_patient.getId());
-        for (MedicationStatement ms : medicationStatements) {
-            if (ms.getMedicationCodeableConcept().hasText() && ms.getMedicationCodeableConcept().getText().toLowerCase().contains("insulin")) {
-                newPatient.setOnPreOperativeInsulin(true);
-            }
-        }
-    
-        // Observations for Creatinine
-        List<Observation> observations = getResourcesForPatient(client, Observation.class, current_patient.getId());
-        for (Observation observation : observations) {
-            if (observation.getCode().hasCoding()) {
-                for (Coding coding : observation.getCode().getCoding()) {
-                    if (coding.hasDisplay() && coding.getDisplay().toLowerCase().contains("creatinine") && observation.hasValueQuantity()) {
-                        BigDecimal creatinineValue = observation.getValueQuantity().getValue();
-                        if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
-                            newPatient.setPreOperativeCreatinineAboveTwo(true);
-                        }
-                    }
-                }
+        if (codeDisplay.contains("creatinine") && observation.hasValueQuantity()) {
+            BigDecimal creatinineValue = observation.getValueQuantity().getValue();
+            if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
+                newPatient.setPreOperativeCreatinineAboveTwo(true);
             }
         }
     }
+    //private void evaluateRCRIValues(Patient current_patient, com.backend.Patient newPatient) {
+    //    // Conditions
+    //    List<Condition> conditions = getResourcesForPatient(client, Condition.class, current_patient.getId());
+    //    for (Condition condition : conditions) {
+    //        if (condition.getCode().hasCoding() && condition.getCode().getCodingFirstRep().hasDisplay()) {
+    //            String display = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
+    //            
+    //            if (display.contains("ischemic heart disease") || display.contains("myocardial infarction")) {
+    //                newPatient.setIschemicHeartDisease(true);
+    //            }
+    //            if (display.contains("congestive heart failure")) {
+    //                newPatient.setCHF(true);
+    //            }
+    //            if (display.contains("cerebrovascular disease") || display.contains("stroke") || display.contains("transient ischemic attack")) {
+    //                newPatient.setCerebrovascularDisease(true);
+    //            }
+    //        }
+    //    }
+    //
+    //    // Medications for Diabetes on Insulin
+    //    List<MedicationStatement> medicationStatements = getResourcesForPatient(client, MedicationStatement.class, current_patient.getId());
+    //    for (MedicationStatement ms : medicationStatements) {
+    //        if (ms.getMedicationCodeableConcept().hasText() && ms.getMedicationCodeableConcept().getText().toLowerCase().contains("insulin")) {
+    //            newPatient.setOnPreOperativeInsulin(true);
+    //        }
+    //    }
+    //
+    //    // Observations for Creatinine
+    //    List<Observation> observations = getResourcesForPatient(client, Observation.class, current_patient.getId());
+    //    for (Observation observation : observations) {
+    //        if (observation.getCode().hasCoding()) {
+    //            for (Coding coding : observation.getCode().getCoding()) {
+    //                if (coding.hasDisplay() && coding.getDisplay().toLowerCase().contains("creatinine") && observation.hasValueQuantity()) {
+    //                    BigDecimal creatinineValue = observation.getValueQuantity().getValue();
+    //                    if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
+    //                        newPatient.setPreOperativeCreatinineAboveTwo(true);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     
 
     private void addPractitioner(Patient current_patient, com.backend.Patient newPatient) {
