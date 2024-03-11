@@ -1,9 +1,8 @@
 "use client"
 
-import React, { ChangeEvent } from 'react'
+import React from 'react'
 import { useState } from 'react'
-import { PlusIcon } from '@heroicons/react/20/solid'
-import {Patient, PatientMap} from '../page'
+import {PatientMap} from '../../Types'
 export type SearchInput = {
   onSearch: (value: string) => void
   names: PatientMap | null

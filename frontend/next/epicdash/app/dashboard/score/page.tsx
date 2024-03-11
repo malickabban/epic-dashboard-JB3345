@@ -3,20 +3,11 @@ import styles from "./PatientScore.module.css"
 import SearchBar from "./SearchBar";
 import { useState, useEffect, useContext } from 'react'
 import {PatientContext, patientContextType} from '../../PatientContext'
-import type {Patient} from "../page";
+import type {Patient, scoreMap} from "../../Types";
 
-//This is for each score with all of the information for each score.
-//Will need to improve this in the future so it isn't so messy.
-export type Scores = {
-  name : string,
-  score : number | null,
-  fields: string[],
-  elements: number[]
-}
 
-//This is the scoreMap which maps each score name to a score.
-export type scoreMap = Record<string, Scores>
 const PatientScore = () => {
+  //Manually calculate age score because not passed in.
   const chadsvascAge = (patient : Patient) => {
     if (patient.age && patient.age >= 65 && patient.age <= 74) {
       return 1;
@@ -28,7 +19,8 @@ const PatientScore = () => {
   }
   const {selectedPatient} = useContext(PatientContext) as patientContextType
 
-  //Stuff that needs to be fixed in the future. Really messy stuff.
+  //Stuff that needs to be fixed in the future. Really messy stuff. Might consider having all of this
+  // stuff present from the frontend instead of having to parse it all in the frontend.
   const [current, setCurrent] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
   elements : [selectedPatient ? chadsvascAge(selectedPatient) : 0, selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
@@ -44,6 +36,8 @@ const PatientScore = () => {
       elements : [selectedPatient && chadsvascAge(selectedPatient) >= 1 ? 1 : 0, selectedPatient && selectedPatient.renalDisease ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
         selectedPatient && selectedPatient.liverDisease ? 1: 0, selectedPatient && selectedPatient.stroke ? 1 : 0, selectedPatient && selectedPatient.priorBleeding ? 1 : 0,
         selectedPatient && selectedPatient.inr ? 1 : 0, selectedPatient && selectedPatient.alcoholUse ? 1 : 0, selectedPatient && selectedPatient.medicationBleeds ? 1 : 0, selectedPatient && selectedPatient.hasBled ? selectedPatient.hasBled : 0]}})
+  //Stuff that needs to be fixed in the future. Really messy stuff. Might consider having all of this
+  // stuff present from the frontend instead of having to parse it all in the frontend.
 
   const [names, setNames] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
@@ -66,9 +60,8 @@ const PatientScore = () => {
   const [selected, setSelected] = useState(selectedPatient);
   const {scores, setScores} = useContext(PatientContext) as patientContextType
 
-  // All just basic search value stuff including add and delete buttons.
+  //Change search dropdown while searching
   useEffect(() => {
-    //Change search dropdown while searching
     if (searchValue === "") {
       setCurrent(names);
     } else {
@@ -84,9 +77,12 @@ const PatientScore = () => {
     }
   },[searchValue]);
 
+  //Change search value based on typing.
   const onSearch = (value: string) => {
     setSearchValue(value)
   }
+
+  //Adds the table to the searchable values.
   const onAdd = () => {
     if (searchValue in names && selected) {
       if (scores) {
@@ -102,6 +98,7 @@ const PatientScore = () => {
     }
   }
 
+  //Deletes score based on current search value.
   const handleDelete = () => {
     if (selected && scores && searchValue in scores) {
       const updatedScores = { ...scores };
@@ -123,7 +120,7 @@ const PatientScore = () => {
         <thead>
         <tr>
           <th className={styles.tf}>{key}</th>
-          {scores[key].fields && scores[key].fields.map((item) =>
+          {scores[key].fields && scores[key].fields.map((item : string) =>
             <th className={styles.td}>{item}</th>
           )}
         </tr>
@@ -131,7 +128,7 @@ const PatientScore = () => {
         <tbody>
         <tr>
           <th className={styles.tf}>Breakdown: </th>
-          {scores[key].elements && scores[key].elements.map((item) =>
+          {scores[key].elements && scores[key].elements.map((item : number) =>
             <th className={styles.td}>{item}</th>
           )}
         </tr>

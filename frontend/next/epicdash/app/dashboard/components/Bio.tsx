@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
 import { HiPlus, HiMinus } from "react-icons/hi";
-import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
-import type {Patient} from "../page"
+import type {Patient} from "../../Types"
 export type bioInput = {
     bioActive: boolean,
     selectedPatient: Patient | null,
