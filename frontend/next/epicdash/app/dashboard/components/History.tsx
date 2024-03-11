@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
 import { HiPlus, HiMinus } from "react-icons/hi";
-import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
-import type {Patient} from "../page"
+import type {Patient} from "../../Types"
 export type historyInput = {
     historyActive: boolean,
     selectedPatient: Patient | null,
@@ -35,10 +34,12 @@ const History = (input: historyInput) => {
               />
                 }
               </div>
+              {!historyActive &&
                 <div className="block h-[200px] overflow-auto" id="historyCard">
                 <p className="ml-2 whitespace-pre-line">{selectedPatient && selectedPatient.encounters ?
                  selectedPatient.encounters.map((item) => item ? item + "\n" : "") : ""}</p>
                  </div>
+              }
         </div>
     )
 }

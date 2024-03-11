@@ -2,24 +2,31 @@ package com.backend;
 
 public class Patient {
 
-    private int age = 0;
-    private String name, general_practitioner;
-    private String patient_id;
-    private boolean deceased;
-    private String gender;
-    private int chadsvasc;
-    private int hasBled;
-    private boolean CHF = false;
-    private boolean stroke = false;
-    private boolean diabetes = false;
-    private boolean VD = false;
-    private boolean hypertension = false;
-    private boolean aspirinClopidogrelNsaid = false;
-    private boolean renalDisease = false;
-    private boolean liverDisease = false;
-    private boolean priorBleeding = false;
-    private boolean heavyDrinker = false;
-    private boolean labileINR = false;
+    public int age = 0;
+    public String name, general_practitioner;
+    public String patient_id;
+    public boolean deceased;
+    public String gender;
+    public int chadsvasc;
+    public int hasBled;
+    public int RCRI;
+    public boolean CHF;
+    public boolean stroke;
+    public boolean diabetes;
+    public boolean VD;
+    public boolean hypertension;
+    public boolean aspirinClopidogrelNsaid;
+    public boolean renalDisease;
+    public boolean liverDisease;
+    public boolean priorBleeding;
+    public boolean heavyDrinker;
+    public boolean labileINR;
+    public boolean ischemicHeartDisease;
+    public boolean cerebrovascularDisease;
+    public boolean onPreOperativeInsulin;
+    public boolean undergoingHighRiskSurgery;
+    public boolean preOperativeCreatinineAboveTwo;
+
     public String[] conditions;
     public String[] observations;
     public String[] encounters;
@@ -31,6 +38,26 @@ public class Patient {
     }
 
     // Getter methods
+
+    public boolean isIschemicHeartDisease() {
+        return ischemicHeartDisease;
+    }
+    // Getter and setter for Cerebrovascular Disease
+    public boolean isCerebrovascularDisease() {
+        return cerebrovascularDisease;
+    }
+    // Getter and setter for On Pre-Operative Insulin
+    public boolean isOnPreOperativeInsulin() {
+        return onPreOperativeInsulin;
+    }
+    // Getter and setter for Undergoing High Risk Surgery
+    public boolean isUndergoingHighRiskSurgery() {
+        return undergoingHighRiskSurgery;
+    }
+    // Getter and setter for Pre-Operative Creatinine Above Two
+    public boolean isPreOperativeCreatinineAboveTwo() {
+        return preOperativeCreatinineAboveTwo;
+    }
     public boolean hasCHF() {
         return CHF;
     }
@@ -174,4 +201,28 @@ public class Patient {
     }
     public void setHasBled(int hasBled) {this.hasBled = hasBled;}
     
+    public void setRCRIScore(int RCRI) {
+        this.RCRI = RCRI;
+    }
+
+    public void setIschemicHeartDisease(boolean ischemicHeartDisease) {
+        this.ischemicHeartDisease = ischemicHeartDisease;
+    }
+
+    public void setCerebrovascularDisease(boolean cerebrovascularDisease) {
+        this.cerebrovascularDisease = cerebrovascularDisease;
+    }
+
+    public void setOnPreOperativeInsulin(boolean onPreOperativeInsulin) {
+        this.onPreOperativeInsulin = onPreOperativeInsulin;
+    }
+
+
+    public void setUndergoingHighRiskSurgery(boolean undergoingHighRiskSurgery) {
+        this.undergoingHighRiskSurgery = undergoingHighRiskSurgery;
+    }
+
+    public void setPreOperativeCreatinineAboveTwo(boolean preOperativeCreatinineAboveTwo) {
+        this.preOperativeCreatinineAboveTwo = preOperativeCreatinineAboveTwo;
+    }
 }

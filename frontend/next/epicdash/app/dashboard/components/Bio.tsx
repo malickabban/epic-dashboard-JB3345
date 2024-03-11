@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
 import { HiPlus, HiMinus } from "react-icons/hi";
-import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import "bootstrap/dist/js/bootstrap.bundle";
-import type {Patient} from "../page"
+import type {Patient} from "../../Types"
 export type bioInput = {
     bioActive: boolean,
     selectedPatient: Patient | null,
@@ -34,12 +33,16 @@ const Bio = (input: bioInput) => {
               />
                 }
               </div>
+              {!bioActive &&
             <div className="block h-[300px] align-middle overflow-auto" id="bioCard">
-              <p className="ml-1 mt-20">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+              <p className="ml-1 mt-10">Name: {selectedPatient ? selectedPatient.name : ""}</p>
+              <p className="ml-1">Age: {selectedPatient && selectedPatient.age ? selectedPatient.age : ""}</p>
+              <p className="ml-1">Gender: {selectedPatient && selectedPatient.gender ? selectedPatient.gender : ""}</p>
               <p className="ml-1">Deceased: {selectedPatient ? (selectedPatient.deceased ? "Yes" : "No") : ""}</p>
               <p className="ml-1">General Practitioner: {selectedPatient ? selectedPatient.generalPractitioner : ""}</p>
               <p className="ml-1">Patient ID: {selectedPatient ? selectedPatient.patientID : ""}</p>
               </div>
+              }
         </div>
     )
 }
