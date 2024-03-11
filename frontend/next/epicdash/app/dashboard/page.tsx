@@ -38,7 +38,7 @@ export type Patient = {
   inr : boolean | null;
   medicationBleeds : boolean | null;
   alcoholUse : boolean | null;
-  hasbled : number | null;
+  hasBled : number | null;
   // Add more properties as needed
 };
 export type PatientMap = Record<string, Patient>;
@@ -108,7 +108,7 @@ const Dashboard: React.FC = () => {
       inr : 'inr' in data ? data.inr : null,
       medicationBleeds : 'medicationBleeds' in data ? data.medicationBleeds : null,
       alcoholUse : 'alcoholUse' in data ? data.alcoholUse : null,
-      hasbled : 'hasbled' in data ? data.hasbled : null
+      hasBled : 'hasBled' in data ? data.hasBled : null
     } 
     return t;
   }

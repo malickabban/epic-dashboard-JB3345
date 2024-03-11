@@ -4,12 +4,17 @@ import SearchBar from "./SearchBar";
 import { useState, useEffect, useContext } from 'react'
 import {PatientContext, patientContextType} from '../../PatientContext'
 import type {Patient} from "../page";
+
+//This is for each score with all of the information for each score.
+//Will need to improve this in the future so it isn't so messy.
 export type Scores = {
   name : string,
   score : number | null,
   fields: string[],
   elements: number[]
 }
+
+//This is the scoreMap which maps each score name to a score.
 export type scoreMap = Record<string, Scores>
 const PatientScore = () => {
   const chadsvascAge = (patient : Patient) => {
@@ -23,6 +28,7 @@ const PatientScore = () => {
   }
   const {selectedPatient} = useContext(PatientContext) as patientContextType
 
+  //Stuff that needs to be fixed in the future. Really messy stuff.
   const [current, setCurrent] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
   elements : [selectedPatient ? chadsvascAge(selectedPatient) : 0, selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
@@ -33,11 +39,11 @@ const PatientScore = () => {
     elements : [selectedPatient && selectedPatient.cerebrovascularDisease ? 1 : 0, selectedPatient && selectedPatient.ischemicHeartDisease ? 1 : 0, selectedPatient && selectedPatient.undergoingHighRiskSurgery ? 1 : 0, 
       selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.onPreOperativeInsulin ? 1 : 0, selectedPatient && selectedPatient.preOperativeCreatinineAboveTwo ? 1 : 0, 
       selectedPatient && selectedPatient.rcri ? selectedPatient.rcri : 0]},
-      "HAS-BLED" : {name : "HAS-BLED", score : selectedPatient ? selectedPatient.hasbled : 0, 
+      "HAS-BLED" : {name : "HAS-BLED", score : selectedPatient ? selectedPatient.hasBled : 0, 
       fields : ["Age", "Renal Disease","Hypertension","Liver Disase", "Stroke", "Prior Bleeding","INR","Alcohol Use","Medications","Score"], 
       elements : [selectedPatient && chadsvascAge(selectedPatient) >= 1 ? 1 : 0, selectedPatient && selectedPatient.renalDisease ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
         selectedPatient && selectedPatient.liverDisease ? 1: 0, selectedPatient && selectedPatient.stroke ? 1 : 0, selectedPatient && selectedPatient.priorBleeding ? 1 : 0,
-        selectedPatient && selectedPatient.inr ? 1 : 0, selectedPatient && selectedPatient.alcoholUse ? 1 : 0, selectedPatient && selectedPatient.medicationBleeds ? 1 : 0, selectedPatient && selectedPatient.hasbled ? selectedPatient.hasbled : 0]}})
+        selectedPatient && selectedPatient.inr ? 1 : 0, selectedPatient && selectedPatient.alcoholUse ? 1 : 0, selectedPatient && selectedPatient.medicationBleeds ? 1 : 0, selectedPatient && selectedPatient.hasBled ? selectedPatient.hasBled : 0]}})
 
   const [names, setNames] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
@@ -49,16 +55,18 @@ const PatientScore = () => {
     elements : [selectedPatient && selectedPatient.cerebrovascularDisease ? 1 : 0, selectedPatient && selectedPatient.ischemicHeartDisease ? 1 : 0, selectedPatient && selectedPatient.undergoingHighRiskSurgery ? 1 : 0, 
       selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.onPreOperativeInsulin ? 1 : 0, selectedPatient && selectedPatient.preOperativeCreatinineAboveTwo ? 1 : 0, 
       selectedPatient && selectedPatient.rcri ? selectedPatient.rcri : 0]},
-      "HAS-BLED" : {name : "HAS-BLED", score : selectedPatient ? selectedPatient.hasbled : 0, 
+      "HAS-BLED" : {name : "HAS-BLED", score : selectedPatient ? selectedPatient.hasBled : 0, 
       fields : ["Age", "Renal Disease","Hypertension","Liver Disase", "Stroke", "Prior Bleeding","INR","Alcohol Use","Medications","Score"], 
       elements : [selectedPatient && chadsvascAge(selectedPatient) >= 1 ? 1 : 0, selectedPatient && selectedPatient.renalDisease ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
         selectedPatient && selectedPatient.liverDisease ? 1: 0, selectedPatient && selectedPatient.stroke ? 1 : 0, selectedPatient && selectedPatient.priorBleeding ? 1 : 0,
-        selectedPatient && selectedPatient.inr ? 1 : 0, selectedPatient && selectedPatient.alcoholUse ? 1 : 0, selectedPatient && selectedPatient.medicationBleeds ? 1 : 0, selectedPatient && selectedPatient.hasbled ? selectedPatient.hasbled : 0]}})
+        selectedPatient && selectedPatient.inr ? 1 : 0, selectedPatient && selectedPatient.alcoholUse ? 1 : 0, selectedPatient && selectedPatient.medicationBleeds ? 1 : 0, selectedPatient && selectedPatient.hasBled ? selectedPatient.hasBled : 0]}})
 
   const [searchValue, setSearchValue] = useState('');
   const [name, setName] = useState<string | null>(selectedPatient ? selectedPatient.name : "");
   const [selected, setSelected] = useState(selectedPatient);
   const {scores, setScores} = useContext(PatientContext) as patientContextType
+
+  // All just basic search value stuff including add and delete buttons.
   useEffect(() => {
     //Change search dropdown while searching
     if (searchValue === "") {
@@ -75,8 +83,8 @@ const PatientScore = () => {
       setCurrent(thing || null);
     }
   },[searchValue]);
+
   const onSearch = (value: string) => {
-    // search value when Enter is pressed
     setSearchValue(value)
   }
   const onAdd = () => {
