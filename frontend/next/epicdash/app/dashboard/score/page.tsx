@@ -113,7 +113,7 @@ const PatientScore = () => {
       <div className={styles.top}>
         <SearchBar placeholder="Search Patient Score..." onSearch={onSearch} current={current}/>
         <button className={styles.addButton} onClick={onAdd}>Add</button>
-        <button className={styles.addButton} onClick={handleDelete}>Delete</button>
+        <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
       </div>
       {scores && Object.keys(scores).map((key) => (
         <table className={styles.table}>

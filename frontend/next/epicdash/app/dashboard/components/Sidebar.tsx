@@ -28,6 +28,11 @@ const menuItems = [
           path: "/dashboard",
           icon: <MdDashboard />,
         },
+        {
+          title: "Diagnosis",
+          path: "/dashboard/diagnosis",
+          icon: <MdDashboard />,
+        },
       ],
     },
     {
