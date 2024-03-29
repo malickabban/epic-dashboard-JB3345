@@ -110,6 +110,7 @@ public class GetPatientsService {
                     addObservations(current_patient, newPatient);
                     addPractitioner(current_patient, newPatient);
                     addMedications(current_patient, newPatient);
+                    System.out.println(newPatient.getDiagnosisNote());
                 
                     // Left because only 1 patient has medication, might want to test more in future
                     /*
@@ -347,6 +348,17 @@ public class GetPatientsService {
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
             getConditionValues(c, newPatient);
             conditions.add(c.getCode().getText());
+            String note1 = "This patient has ";
+            note1 = note1.concat(c.getCode().getText());
+            newPatient.addNote(note1);
+            if (!c.getClinicalStatus().isEmpty()) {
+                String note = "This condition is ";
+                note = note.concat(c.getClinicalStatus().getCodingFirstRep().getCode());
+                newPatient.addNote(note);
+            }
+            if (c.hasBodySite()) {
+                System.out.println(c.getBodySiteFirstRep().getText());
+            }
         }
         // If there are conditions add them to the patient
         if (conditions.size() != 0) {

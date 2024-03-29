@@ -5,12 +5,27 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Release Notes
 
+## Version 0.3.0
+
+### Features
+* Patient medical scores section complete
+* Medical score page added
+* Scores can be added to and removed from medical score page
+
+### Bug Fixes
+* Changed API calls so no duplicate patients are obtained
+* Altered privacy of patient object fields so data is available to frontend
+
+### Known Issues
+* Current patients obtained from API do not contain enough data (conditions, encounters, diagnoses)
+* Formatting needs to be improved
+
 ## Version 0.2.0
 
 ### Features
-* Patient identifying data, diagnoses, and visit history are now displayed.
-* Any displayed data can be removed from the dashboard.
-* Made more improvements to the UI.
+* Patient identifying data, diagnoses, and visit history are now displayed
+* Any displayed data can be removed from the dashboard
+* Made more improvements to the UI
 
 ### Bug Fixes
 * Changed API calls to occur on start up, improving performance
@@ -23,9 +38,9 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ## Version 0.1.0
 
 ### Features
-* Patient's name, id, general practicioner, and death status are now displayed.
-* Added the ability to add, remove, and search for patients.
-* Greatly improved the look and usability of the UI.
+* Patient's name, id, general practicioner, and death status are now displayed
+* Added the ability to add, remove, and search for patients
+* Greatly improved the look and usability of the UI
 
 ### Known Issues
 * Various Formatting bugs

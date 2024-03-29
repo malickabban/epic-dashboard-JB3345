@@ -7,6 +7,7 @@ public class Patient {
     public String patient_id;
     public boolean deceased;
     public String gender;
+    public String diagnosisNote = "";
     public int chadsvasc;
     public int hasBled;
     public int RCRI;
@@ -57,6 +58,9 @@ public class Patient {
     // Getter and setter for Pre-Operative Creatinine Above Two
     public boolean isPreOperativeCreatinineAboveTwo() {
         return preOperativeCreatinineAboveTwo;
+    }
+    public String getDiagnosisNote() {
+        return diagnosisNote;
     }
     public boolean hasCHF() {
         return CHF;
@@ -164,7 +168,10 @@ public class Patient {
     public void setGender(String gender) {
         this.gender = gender;
     }
-
+    public void addNote(String note) {
+        diagnosisNote = diagnosisNote.concat(note);
+        diagnosisNote = diagnosisNote.concat("\n");
+    }
     public void setCHF(boolean CHF) {
         this.CHF = CHF;
     }
