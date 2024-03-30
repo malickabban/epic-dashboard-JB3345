@@ -19,7 +19,11 @@ export type patientContextType = {
     setBasicActive : (value: boolean) => void,
     scores : scoreMap,
     setScores : (value: scoreMap) => void,
-    resetPatient : () => void
+    resetPatient : () => void,
+    notesActive : boolean, 
+    setNotesActive : (value: boolean) => void,
+    scoresActive : boolean, 
+    setScoresActive : (value: boolean) => void,
 }
 
 export const PatientContext = createContext<patientContextType | null>(null);
@@ -35,6 +39,8 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [bioActive, setBioActive] = useState(false);
     const [observationsActive, setObservationsActive] = useState(false);
     const [basicActive, setBasicActive] = useState(false);
+    const [notesActive, setNotesActive] = useState(false);
+    const [scoresActive, setScoresActive] = useState(false);
 
     //resets the basic info view for changing the selected patient or deleting a patient
     const resetPatient = () => {
@@ -42,6 +48,8 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
         const historyCard = document.getElementById("historyCard");
         const conditionsCard = document.getElementById("conditionsCard");
         const bioCard = document.getElementById("bioCard");
+        const notesCard = document.getElementById("notesCard");
+        const scoresCard = document.getElementById("scoresCard");
         if (observationsCard && observationsCard.style.display === "none") {
           observationsCard.style.display = "block";
         }
@@ -54,18 +62,27 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
         if (bioCard && bioCard.style.display === "none") {
           bioCard.style.display = "block";
         }
+        if (notesCard && notesCard.style.display === "none") {
+          notesCard.style.display = "block";
+        }
+        if (scoresCard && scoresCard.style.display === "none") {
+          scoresCard.style.display = "block";
+        }
         setBasicActive(false);
         setConditionsActive(false);
         setHistoryActive(false);
         setObservationsActive(false);
         setBioActive(false);
+        setNotesActive(false);
+        setScoresActive(false);
         setScores({});
     };
     const [scores, setScores] = useState({});
     return (
         <PatientContext.Provider value={{ displayedPatients, selectedPatient, setDisplayedPatients,setSelectedPatient,
           conditionsActive, setConditionsActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, 
-          basicActive, setBasicActive, bioActive, setBioActive, scores, setScores, resetPatient}}>
+          basicActive, setBasicActive, bioActive, setBioActive, scores, setScores, resetPatient, notesActive, setNotesActive, 
+          scoresActive,setScoresActive}}>
           {children}
         </PatientContext.Provider>
       );
