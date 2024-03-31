@@ -239,6 +239,31 @@ public class GetPatientsService {
                 chadsVascScore += 1;
             }
             patient.setChadsVasc(chadsVascScore);
+            patient.addChadsvascNote("The patient has a ChadsVasc Score of " + chadsVascScore);
+            if (chadsVascScore == 0) {
+                patient.addChadsvascNote("""
+                        Low Risk: Patient has a low risk of stroke. No significant risk factors are present, 
+                        and anticoagulation therapy may not be necessary unless other clinical indications arise.
+                        """);
+            } else if (chadsVascScore == 1) {
+                patient.addChadsvascNote("""
+                    Mild Risk: Patient has a slightly increased risk of stroke. 
+                    One mild risk factor is present, warranting consideration of 
+                    anticoagulation therapy based on individual clinical assessment.
+                    """);
+            } else if (chadsVascScore == 2) {
+                patient.addChadsvascNote("""
+                    Moderate Risk: Patient demonstrates a moderate risk of stroke. Multiple mild 
+                    risk factors are present, or one significant risk factor is identified. 
+                    Anticoagulation therapy should be considered based on individual risk assessment and guidelines.
+                    """);
+            } else {
+                patient.addChadsvascNote("""
+                    High Risk: Patient presents a high risk of stroke. Multiple significant risk factors are present, 
+                    necessitating strong consideration of anticoagulation therapy to reduce the risk of stroke. 
+                    Close monitoring and management are essential to mitigate the risk of thromboembolic events.
+                    """);
+            }
         }
     }
 
@@ -265,6 +290,34 @@ public class GetPatientsService {
 
             // Set the calculated RCRI score for the patient
             patient.setRCRIScore(rcriScore);
+            patient.addRCRINote("The patient has a RCRI Score of " + rcriScore);
+            if (rcriScore == 0) {
+                patient.addRCRINote("""
+                        Low Risk: Patient exhibits a low risk of cardiac complications. No significant cardiac
+                         risk factors are identified, and cardiac monitoring may 
+                         not be necessary unless other clinical indications arise.
+                        """);
+            } else if (rcriScore == 1) {
+                patient.addRCRINote("""
+                    Mild Risk: Patient has a slightly increased risk of cardiac complications. 
+                    One or more mild risk factors are present, warranting close monitoring 
+                    during the perioperative period.
+                    """);
+            } else if (rcriScore == 2) {
+                patient.addRCRINote("""
+                    Moderate Risk: Patient demonstrates a moderate risk of cardiac complications. 
+                    Multiple mild risk factors are present, or one significant risk factor is identified. Consideration 
+                    of cardiac evaluation and optimization prior to surgery is advised.
+                    """);
+            } else {
+                patient.addRCRINote("""
+                    High Risk: Patient presents a high risk of cardiac complications. 
+                    Multiple significant risk factors are present, necessitating strong 
+                    consideration of cardiac evaluation, optimization, and consultation with a
+                     cardiologist prior to surgery. Enhanced perioperative monitoring and management 
+                     are recommended to mitigate cardiac risks.
+                    """);
+            }
 
             // Print statements for checking criteria (if needed)
             ////System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
