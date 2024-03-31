@@ -8,6 +8,9 @@ public class Patient {
     public boolean deceased;
     public String gender;
     public String diagnosisNote = "";
+    public String hasBledDiagnosisNote = "";
+    public String chadsvascDiagnosisNote = "";
+    public String RCRIdiagnosisNote = "";
     public int chadsvasc;
     public int hasBled;
     public int RCRI;
@@ -61,6 +64,15 @@ public class Patient {
     }
     public String getDiagnosisNote() {
         return diagnosisNote;
+    }
+    public String getHasBledDiagnosisNote() {
+        return hasBledDiagnosisNote;
+    }
+    public String getChadvascDiagnosisNote() {
+        return chadsvascDiagnosisNote;
+    }
+    public String getRCRIDiagnosisNote() {
+        return RCRIdiagnosisNote;
     }
     public boolean hasCHF() {
         return CHF;
@@ -171,6 +183,16 @@ public class Patient {
     public void addNote(String note) {
         diagnosisNote = diagnosisNote.concat(note);
         diagnosisNote = diagnosisNote.concat("\n");
+    }
+    public void addRCRINote(String note) {
+        RCRIdiagnosisNote = RCRIdiagnosisNote.concat(note);
+        RCRIdiagnosisNote = RCRIdiagnosisNote.concat("\n");
+    }    public void addChadsvascNote(String note) {
+        chadsvascDiagnosisNote = chadsvascDiagnosisNote.concat(note);
+        chadsvascDiagnosisNote = chadsvascDiagnosisNote.concat("\n");
+    }    public void addHasBledNote(String note) {
+        hasBledDiagnosisNote = hasBledDiagnosisNote.concat(note);
+        hasBledDiagnosisNote = hasBledDiagnosisNote.concat("\n");
     }
     public void setCHF(boolean CHF) {
         this.CHF = CHF;
