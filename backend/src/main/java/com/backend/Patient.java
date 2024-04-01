@@ -13,7 +13,7 @@ public class Patient {
     public String RCRIdiagnosisNote = "";
     public int chadsvasc;
     public int hasBled;
-    public int RCRI;
+    public int rcri;
     public boolean CHF;
     public boolean stroke;
     public boolean diabetes;
@@ -231,7 +231,7 @@ public class Patient {
     public void setHasBled(int hasBled) {this.hasBled = hasBled;}
     
     public void setRCRIScore(int RCRI) {
-        this.RCRI = RCRI;
+        this.rcri = RCRI;
     }
 
     public void setIschemicHeartDisease(boolean ischemicHeartDisease) {
