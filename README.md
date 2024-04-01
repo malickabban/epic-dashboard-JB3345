@@ -14,6 +14,7 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 ### Bug Fixes
 * Changed API calls so correct patient data is obtained
+* Updated frontend score display so correct data is displayed in each category
 
 ### Known Issues
 * Several instances of each patient with different data are obtained from the server, need to detect this and diplay all data for each patient on the same screen
