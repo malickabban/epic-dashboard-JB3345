@@ -5,6 +5,20 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Release Notes
 
+## Version 0.4.0
+
+### Features
+* Diagnostic notes section added
+* Notes detailing each score calculated are now displayed
+* Diagnostic notes can be added to and removed from the diagnostic notes section
+
+### Bug Fixes
+* Changed API calls so correct patient data is obtained
+
+### Known Issues
+* Several instances of each patient with different data are obtained from the server, need to detect this and diplay all data for each patient on the same screen
+* UX needs to be improved
+
 ## Version 0.3.0
 
 ### Features
