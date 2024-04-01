@@ -39,37 +39,13 @@ public class GetPatientsService {
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
         Bundle randomPatientResponse = patientRandomSearch("2011-01-01", "Smith");
-        //Bundle samplePatientResponse = samplePatientSearch();
 
         HashMap<String, com.backend.Patient> randomPatients = processPatients(randomPatientResponse);
-        ///HashMap<String, com.backend.Patient> samplePatient = processPatients(samplePatientResponse);
-        //randomPatients.putAll(samplePatient);
         calculateChadsVasc(randomPatients);
         calculateHasBled(randomPatients);
         calculateRCRIScore(randomPatients);
         return randomPatients;
     }
-
-
-    //private Bundle samplePatientSearch(){
-
-    ////    Bundle bundle = new Bundle().setType(Bundle.BundleType.SEARCHSET);
-
-        
-    //    for (String samplePatientID : demoSamplePatientIDs) {
-    //        Bundle searchBundle = client.search()
-    //                .forResource(Patient.class)
-    //                .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(null, samplePatientID))
-    //                .returnBundle(Bundle.class)
-    //                .execute();
-    //        bundle.addEntry().setResource(searchBundle.getEntryFirstRep().getResource());
-    //    }
-    // System.out.println("\n CHECK OUT THIS BUNDLE: " + bundle.getEntry().get(0).getResource().toString());
-
-    // System.out.println("Okay we just got this guy " + " " + samplePatientID + "\n");
-
-    //return bundle;
-    //}
 
     //This is where patient api call will be handled
     private Bundle patientRandomSearch(String birthday, String practitionerName) {
@@ -81,6 +57,8 @@ public class GetPatientsService {
     }
 	//Creating the patient objects will go here. For each api call to get data (condition, encounter, etc) a new method is used	
     private HashMap<String, com.backend.Patient> processPatients(Bundle response) {
+        //Currently, only the first instance of a patient (based on name) is added. This is for display only, so only unique patients are displayed
+        //This should be changed in the future since each version of a patient amy have updated information
         HashSet<String> processedNames = new HashSet<>();
         HashMap<String, com.backend.Patient> patientsMap = new HashMap<>();
         int count = 0;
@@ -110,7 +88,7 @@ public class GetPatientsService {
                     addObservations(current_patient, newPatient);
                     addPractitioner(current_patient, newPatient);
                     addMedications(current_patient, newPatient);
-                    System.out.println(newPatient.getDiagnosisNote());
+                    //System.out.println(newPatient.getDiagnosisNote());
                 
                     // Left because only 1 patient has medication, might want to test more in future
                     /*
@@ -120,10 +98,6 @@ public class GetPatientsService {
                         }
                     }
                     */
-                         // After all patient data is processed, evaluate RCRI values
-                    //evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
-
-                    // Then, calculate the RCRI score based on the evaluated criteria
                     processedNames.add(patientName);
                     patientsMap.put(newPatient.getPatientID(), newPatient);
                     count++;
@@ -209,34 +183,42 @@ public class GetPatientsService {
             //C
             if (patient.hasCHF()) {
                 chadsVascScore += 1;
+                //System.out.println("CHF");
             }
             ////H
             if (patient.hasHypertension()) {
                 chadsVascScore += 1;
+                //System.out.println("Hypertension");
             }
             //A
             if (patient.getAge() >= 75) {
                 chadsVascScore += 2;
+                //System.out.println("Age above 75");
             }
             //D
             if (patient.hasDiabetes()) {
                 chadsVascScore += 1;
+                //System.out.println("Diabetes");
             }
             //S
             if (patient.hasStroke()) {
                 chadsVascScore += 2;
+                //System.out.println("Stroke");
             }
             //V
             if (patient.hasVD()) {
                 chadsVascScore += 1;
+                //System.out.println("VD");
             }
             //A
             if (patient.getAge() >= 65 && patient.getAge() <= 74) {
                 chadsVascScore += 1;
+                //System.out.println("Age between 65 and 75");
             }
             //S
             if (patient.getGender().equalsIgnoreCase("female")) {
                 chadsVascScore += 1;
+                //System.out.println("Female");
             }
             patient.setChadsVasc(chadsVascScore);
             patient.addChadsvascNote("The patient has a ChadsVasc Score of " + chadsVascScore);
@@ -264,6 +246,17 @@ public class GetPatientsService {
                     Close monitoring and management are essential to mitigate the risk of thromboembolic events.
                     """);
             }
+            // Print statements for checking criteria (if needed)
+            ////System.out.println("Patient ID: " + patient.getPatientID() + " - CHADSVASC Criteria:");
+            ////System.out.println("Has Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("Has Hypertension: " + patient.hasHypertension());
+            ////System.out.println("History of Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("Age: " + patient.getAge());
+            ////System.out.println("Diabetes: " + patient.hasDiabetes());
+            ////System.out.println("Has had a stroke or TIA: " + patient.hasStroke());
+            ////System.out.println("Has vascular disease: " + patient.hasVD());
+            ////System.out.println("Gender: " + patient.getGender());
+            ////System.out.println("Final CADSVASC Score: " + chadsVascScore);
         }
     }
 
@@ -320,13 +313,13 @@ public class GetPatientsService {
             }
 
             // Print statements for checking criteria (if needed)
-            ////System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
-            ////System.out.println("Undergoing High-risk Surgery: " + newPatient.isUndergoingHighRiskSurgery());
-            ////System.out.println("History of Ischemic Heart Disease: " + newPatient.isIschemicHeartDisease());
-            ////System.out.println("History of Congestive Heart Failure: " + newPatient.hasCHF());
-            ////System.out.println("History of Cerebrovascular Disease: " + newPatient.isCerebrovascularDisease());
-            ////System.out.println("Diabetes Mellitus on Insulin: " + newPatient.isOnPreOperativeInsulin());
-            ////System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + newPatient.isPreOperativeCreatinineAboveTwo());
+            ////System.out.println("Patient ID: " + patient.getPatientID() + " - RCRI Criteria:");
+            ////System.out.println("Undergoing High-risk Surgery: " + patient.isUndergoingHighRiskSurgery());
+            ////System.out.println("History of Ischemic Heart Disease: " + patient.isIschemicHeartDisease());
+            ////System.out.println("History of Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("History of Cerebrovascular Disease: " + patient.isCerebrovascularDisease());
+            ////System.out.println("Diabetes Mellitus on Insulin: " + patient.isOnPreOperativeInsulin());
+            ////System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + patient.isPreOperativeCreatinineAboveTwo());
             ////System.out.println("Final RCRI Score: " + rcriScore + "\n");
         }  
     }
@@ -551,48 +544,6 @@ public class GetPatientsService {
             }
         }
     }
-    //private void evaluateRCRIValues(Patient current_patient, com.backend.Patient newPatient) {
-    //    // Conditions
-    //    List<Condition> conditions = getResourcesForPatient(client, Condition.class, current_patient.getId());
-    //    for (Condition condition : conditions) {
-    //        if (condition.getCode().hasCoding() && condition.getCode().getCodingFirstRep().hasDisplay()) {
-    //            String display = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
-    //            
-    //            if (display.contains("ischemic heart disease") || display.contains("myocardial infarction")) {
-    //                newPatient.setIschemicHeartDisease(true);
-    //            }
-    //            if (display.contains("congestive heart failure")) {
-    //                newPatient.setCHF(true);
-    //            }
-    //            if (display.contains("cerebrovascular disease") || display.contains("stroke") || display.contains("transient ischemic attack")) {
-    //                newPatient.setCerebrovascularDisease(true);
-    //            }
-    //        }
-    //    }
-    //
-    //    // Medications for Diabetes on Insulin
-    //    List<MedicationStatement> medicationStatements = getResourcesForPatient(client, MedicationStatement.class, current_patient.getId());
-    //    for (MedicationStatement ms : medicationStatements) {
-    //        if (ms.getMedicationCodeableConcept().hasText() && ms.getMedicationCodeableConcept().getText().toLowerCase().contains("insulin")) {
-    //            newPatient.setOnPreOperativeInsulin(true);
-    //        }
-    //    }
-    //
-    //    // Observations for Creatinine
-    //    List<Observation> observations = getResourcesForPatient(client, Observation.class, current_patient.getId());
-    //    for (Observation observation : observations) {
-    //        if (observation.getCode().hasCoding()) {
-    //            for (Coding coding : observation.getCode().getCoding()) {
-    //                if (coding.hasDisplay() && coding.getDisplay().toLowerCase().contains("creatinine") && observation.hasValueQuantity()) {
-    //                    BigDecimal creatinineValue = observation.getValueQuantity().getValue();
-    //                    if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
-    //                        newPatient.setPreOperativeCreatinineAboveTwo(true);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     
 
     private void addPractitioner(Patient current_patient, com.backend.Patient newPatient) {
