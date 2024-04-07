@@ -5,6 +5,8 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import type {Patient} from "../../Types"
 import { useRouter } from 'next/navigation';
 import { HiPlus, HiMinus, HiOutlineDocumentDuplicate  } from "react-icons/hi";
+import Diagnosis from "../diagnosis/page";
+
 
 export type notesInput = {
     notesActive: boolean,
@@ -30,9 +32,12 @@ const Notes = (input: notesInput) => {
         <div className="col-span card shadow-md my-4">
             <div className="flex justify-between">
             <div className="flex flex-col">
-            <button className="bg-[var(--bg)] text-[var(--text)] p-1 ml-1 mt-1 rounded text-xl" onClick={() => selectedPatient ? router.push('/dashboard/diagnosis') : null}>Diagnostic Notes</button>
+            <button className="bg-[var(--bg)] text-[var(--text)] p-1 ml-1 mt-1 rounded text-xl">Diagnostic Notes</button>
+            
             <p className="ml-1 text-xs">(Click Diagnostic Notes for searchable notes)</p>
-            </div>
+            <Diagnosis/>
+        </div>
+            
             <div className="flex flex-row">
             <HiOutlineDocumentDuplicate className="mr-2 mt-1" onClick={handleCopy}/>
             {notesActive ?
@@ -53,12 +58,7 @@ const Notes = (input: notesInput) => {
                 }
             </div>
             </div>
-            {!notesActive &&
-            <div id="notesCard" className="h-[200px] overflow-auto">{selectedPatient && selectedPatient.diagnosisNote && (
-            selectedPatient.diagnosisNote.map((item, index) => <p className="ml-2" key={item + index}>{item ? item : ""}</p>)
-            )}
-            </div>
-            }
+            
           </div>
     )
 }

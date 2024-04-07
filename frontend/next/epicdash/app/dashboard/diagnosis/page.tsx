@@ -45,10 +45,22 @@ const Diagnosis = () => {
 
   };
 
+  const onAdd = () => {
+
+  }
+
+  const handleDelete = () => {
+
+  };
+
   return (
     <div className={styles.container}>
       <h4>{selectedPatient && selectedPatient.name}</h4>
+      <div className="flex justify-between items-center mr-4">
+      
       <SearchBar placeholder="Search Diagnosis..." onSearch={onSearch} diagnoses={diagnoses} />
+      
+      </div>
       {searched && diagnoses && diagnoses.length === 0 && <p>No matching diagnoses found.</p>}
       {searched &&
         diagnoses &&
@@ -57,8 +69,9 @@ const Diagnosis = () => {
           <div className="mt-2 card p-3 flex flex-row justify-between" key={key + index}>
             <p>{key}</p>
             {/* Add button next to each note */}
-            <button onClick={() => handleAddNote(key)}>Add</button>
-            <HiOutlineDocumentDuplicate className="mr-2 mt-1" onClick={() => handleCopy(key)} />
+            <button className={styles.addButton} onClick={onAdd}>Add</button>
+            <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
+            <HiOutlineDocumentDuplicate className="mr-8 mt-8" onClick={() => handleCopy(key)} />
           </div>
         ))}
     </div>
