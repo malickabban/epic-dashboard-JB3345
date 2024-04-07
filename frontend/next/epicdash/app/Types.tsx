@@ -8,6 +8,8 @@ export type Patient = {
     conditions : string[] | null;
 
     chadsvascDiagnosisNote: string[] | null;
+    hasBledDiagnosisNote: string[] | null;
+    RCRIdiagnosisNote: string[] | null;
     observations : string[] | null;
     encounters : string[] | null;
     age: number | null;
@@ -47,6 +49,8 @@ export const clonePatient = (data : Patient) => {
       deceased: data.deceased,
       generalPractitioner: data.generalPractitioner,
       chadsvascDiagnosisNote: data.chadsvascDiagnosisNote,
+      RCRIdiagnosisNote: data.RCRIdiagnosisNote,
+      hasBledDiagnosisNote: data.hasBledDiagnosisNote,
       patientID: data.patientID,
       conditions: data.conditions,
       observations: data.observations,

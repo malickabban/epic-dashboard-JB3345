@@ -11,7 +11,7 @@ const SearchBar = (input : SearchInput) => {
     const [text, setText] = useState<string>('')
     return (
         <div className= {styles.container}>
-            <MdSearch/>
+            <MdSearch className="text-white"/>
             <input type="text" placeholder= {placeholder} value={text} className= {styles.input} onChange={e => {
                 setText(e.target.value)
                 onSearch(e.target.value)
