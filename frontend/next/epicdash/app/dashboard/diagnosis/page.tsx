@@ -71,7 +71,9 @@ const Diagnosis = () => {
             {/* Add button next to each note */}
             <button className={styles.addButton} onClick={onAdd}>Add</button>
             <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
-            <HiOutlineDocumentDuplicate className="mr-8 mt-8" onClick={() => handleCopy(key)} />
+            <div>
+            <HiOutlineDocumentDuplicate className="mr-8 mt-8 w-8 h-8" onClick={() => handleCopy(key)} />
+            </div>
           </div>
         ))}
     </div>
