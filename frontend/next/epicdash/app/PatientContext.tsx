@@ -24,6 +24,8 @@ export type patientContextType = {
     setNotesActive : (value: boolean) => void,
     scoresActive : boolean, 
     setScoresActive : (value: boolean) => void,
+    added : string[] | null,
+    setAdded: (value: string[]) => void
 }
 
 export const PatientContext = createContext<patientContextType | null>(null);
@@ -41,6 +43,7 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [basicActive, setBasicActive] = useState(false);
     const [notesActive, setNotesActive] = useState(false);
     const [scoresActive, setScoresActive] = useState(false);
+    const [added, setAdded] = useState<string[] | null>([]); 
 
     //resets the basic info view for changing the selected patient or deleting a patient
     const resetPatient = () => {
@@ -76,13 +79,14 @@ const PatientSource: React.FC<{children: React.ReactNode}> = ({ children }) => {
         setNotesActive(false);
         setScoresActive(false);
         setScores({});
+        setAdded([]);
     };
     const [scores, setScores] = useState({});
     return (
         <PatientContext.Provider value={{ displayedPatients, selectedPatient, setDisplayedPatients,setSelectedPatient,
           conditionsActive, setConditionsActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, 
           basicActive, setBasicActive, bioActive, setBioActive, scores, setScores, resetPatient, notesActive, setNotesActive, 
-          scoresActive,setScoresActive}}>
+          scoresActive,setScoresActive, added, setAdded}}>
           {children}
         </PatientContext.Provider>
       );
