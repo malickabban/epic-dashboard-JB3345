@@ -153,24 +153,11 @@ public class GetPatientsService {
             patient.setHasBled(hasBledScore);
             patient.addHasBledNote("The patient has a HasBled score of " + hasBledScore);
             if (hasBledScore == 0) {
-                patient.addHasBledNote("""
-                        Low Risk: The patient's bleeding risk according to the HAS-BLED score is low. 
-                        Monitoring for bleeding events should still occur, but the risk is minimal. 
-                        Consideration of anticoagulant therapy should be balanced with the potential risk of bleeding.
-                        """);
+                patient.addNote("HasBled: Low Risk: The patient's bleeding risk according to the HAS-BLED score is low. Monitoring for bleeding events should still occur, but the risk is minimal. Consideration of anticoagulant therapy should be balanced with the potential risk of bleeding.");
             } else if (hasBledScore == 1) {
-                patient.addHasBledNote("""
-                    Moderate Risk: The patient's bleeding risk according to the HAS-BLED score is moderate. 
-                    There is a slightly increased risk of bleeding complications associated with anticoagulant therapy. 
-                    Close monitoring of the patient's condition and regular assessment for signs of bleeding are recommended.
-                    """);
+                patient.addNote("HasBled: Moderate Risk: The patient's bleeding risk according to the HAS-BLED score is moderate. There is a slightly increased risk of bleeding complications associated with anticoagulant therapy. Close monitoring of the patient's condition and regular assessment for signs of bleeding are recommended.");
             } else {
-                patient.addHasBledNote("""
-                    High Risk: The patient's bleeding risk according to the HAS-BLED score is high. 
-                    There is a significant risk of bleeding complications associated with anticoagulant therapy. 
-                    Consideration should be given to the patient's overall health status and the potential benefits 
-                    of anticoagulation therapy weighed against the increased risk of bleeding.
-                    """);
+                patient.addNote("HasBled: High Risk: The patient's bleeding risk according to the HAS-BLED score is high. There is a significant risk of bleeding complications associated with anticoagulant therapy. Consideration should be given to the patient's overall health status and the potential benefits of anticoagulation therapy weighed against the increased risk of bleeding.");
             }
         }
     }
@@ -223,28 +210,13 @@ public class GetPatientsService {
             patient.setChadsVasc(chadsVascScore);
             patient.addChadsvascNote("The patient has a ChadsVasc Score of " + chadsVascScore);
             if (chadsVascScore == 0) {
-                patient.addChadsvascNote("""
-                        Low Risk: Patient has a low risk of stroke. No significant risk factors are present, 
-                        and anticoagulation therapy may not be necessary unless other clinical indications arise.
-                        """);
+                patient.addNote("CHADSVASc: Low Risk: Patient has a low risk of stroke. No significant risk factors are present, and anticoagulation therapy may not be necessary unless other clinical indications arise.");
             } else if (chadsVascScore == 1) {
-                patient.addChadsvascNote("""
-                    Mild Risk: Patient has a slightly increased risk of stroke. 
-                    One mild risk factor is present, warranting consideration of 
-                    anticoagulation therapy based on individual clinical assessment.
-                    """);
+                patient.addNote("CHADSVASc: Mild Risk: Patient has a slightly increased risk of stroke. One mild risk factor is present, warranting consideration of anticoagulation therapy based on individual clinical assessment.");
             } else if (chadsVascScore == 2) {
-                patient.addChadsvascNote("""
-                    Moderate Risk: Patient demonstrates a moderate risk of stroke. Multiple mild 
-                    risk factors are present, or one significant risk factor is identified. 
-                    Anticoagulation therapy should be considered based on individual risk assessment and guidelines.
-                    """);
+                patient.addNote("CHADSVASc: Moderate Risk: Patient demonstrates a moderate risk of stroke. Multiple mild risk factors are present, or one significant risk factor is identified. Anticoagulation therapy should be considered based on individual risk assessment and guidelines.");
             } else {
-                patient.addChadsvascNote("""
-                    High Risk: Patient presents a high risk of stroke. Multiple significant risk factors are present, 
-                    necessitating strong consideration of anticoagulation therapy to reduce the risk of stroke. 
-                    Close monitoring and management are essential to mitigate the risk of thromboembolic events.
-                    """);
+                patient.addNote("CHADSVASc: High Risk: Patient presents a high risk of stroke. Multiple significant risk factors are present, necessitating strong consideration of anticoagulation therapy to reduce the risk of stroke. Close monitoring and management are essential to mitigate the risk of thromboembolic events.");
             }
             // Print statements for checking criteria (if needed)
             ////System.out.println("Patient ID: " + patient.getPatientID() + " - CHADSVASC Criteria:");
@@ -285,31 +257,13 @@ public class GetPatientsService {
             patient.setRCRIScore(rcriScore);
             patient.addRCRINote("The patient has a RCRI Score of " + rcriScore);
             if (rcriScore == 0) {
-                patient.addRCRINote("""
-                        Low Risk: Patient exhibits a low risk of cardiac complications. No significant cardiac
-                         risk factors are identified, and cardiac monitoring may 
-                         not be necessary unless other clinical indications arise.
-                        """);
+                patient.addNote("RCRI: Low Risk: Patient exhibits a low risk of cardiac complications. No significant cardiac risk factors are identified, and cardiac monitoring may not be necessary unless other clinical indications arise.");
             } else if (rcriScore == 1) {
-                patient.addRCRINote("""
-                    Mild Risk: Patient has a slightly increased risk of cardiac complications. 
-                    One or more mild risk factors are present, warranting close monitoring 
-                    during the perioperative period.
-                    """);
+                patient.addNote("RCRI: Mild Risk: Patient has a slightly increased risk of cardiac complications. One or more mild risk factors are present, warranting close monitoring during the perioperative period.");
             } else if (rcriScore == 2) {
-                patient.addRCRINote("""
-                    Moderate Risk: Patient demonstrates a moderate risk of cardiac complications. 
-                    Multiple mild risk factors are present, or one significant risk factor is identified. Consideration 
-                    of cardiac evaluation and optimization prior to surgery is advised.
-                    """);
+                patient.addNote("RCRI: Moderate Risk: Patient demonstrates a moderate risk of cardiac complications. Multiple mild risk factors are present, or one significant risk factor is identified. Consideration of cardiac evaluation and optimization prior to surgery is advised.");
             } else {
-                patient.addRCRINote("""
-                    High Risk: Patient presents a high risk of cardiac complications. 
-                    Multiple significant risk factors are present, necessitating strong 
-                    consideration of cardiac evaluation, optimization, and consultation with a
-                     cardiologist prior to surgery. Enhanced perioperative monitoring and management 
-                     are recommended to mitigate cardiac risks.
-                    """);
+                patient.addNote("RCRI: High Risk: Patient presents a high risk of cardiac complications. Multiple significant risk factors are present, necessitating strong consideration of cardiac evaluation, optimization, and consultation with a cardiologist prior to surgery. Enhanced perioperative monitoring and management are recommended to mitigate cardiac risks.");
             }
 
             // Print statements for checking criteria (if needed)
@@ -415,17 +369,6 @@ public class GetPatientsService {
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
             getConditionValues(c, newPatient);
             conditions.add(c.getCode().getText());
-            String note1 = "This patient has ";
-            note1 = note1.concat(c.getCode().getText());
-            newPatient.addNote(note1);
-            if (!c.getClinicalStatus().isEmpty()) {
-                String note = "This condition is ";
-                note = note.concat(c.getClinicalStatus().getCodingFirstRep().getCode());
-                newPatient.addNote(note);
-            }
-            if (c.hasBodySite()) {
-                System.out.println(c.getBodySiteFirstRep().getText());
-            }
         }
         // If there are conditions add them to the patient
         if (conditions.size() != 0) {
