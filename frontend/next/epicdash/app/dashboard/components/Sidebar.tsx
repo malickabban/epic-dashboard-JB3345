@@ -33,14 +33,10 @@ const menuItems = [
     {
       title: "User",
       list: [
+      
         {
-          title: "Settings",
-          path: "/dashboard/settings",
-          icon: <MdOutlineSettings />,
-        },
-        {
-          title: "Help",
-          path: "/dashboard/help",
+          title: "Privacy Policy",
+          path: "/dashboard/privacypolicy",
           icon: <MdHelpCenter />,
         },
         {
