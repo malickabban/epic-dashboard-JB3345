@@ -153,20 +153,16 @@ public class GetPatientsService {
             patient.setHasBled(hasBledScore);
             patient.addHasBledNote("The patient has a HasBled score of " + hasBledScore);
             if (hasBledScore == 0) {
-                patient.addHasBledNote("""
-                        Low Risk: The patient's bleeding risk according to the HAS-BLED score is low. 
-                        Monitoring for bleeding events should still occur, but the risk is minimal. 
-                        Consideration of anticoagulant therapy should be balanced with the potential risk of bleeding.
+                patient.addNote("""
+                        Low Risk: The patient's bleeding risk according to the HAS-BLED score is low. Monitoring for bleeding events should still occur, but the risk is minimal. Consideration of anticoagulant therapy should be balanced with the potential risk of bleeding.
                         """);
             } else if (hasBledScore == 1) {
-                patient.addHasBledNote("""
-                    Moderate Risk: The patient's bleeding risk according to the HAS-BLED score is moderate. 
-                    There is a slightly increased risk of bleeding complications associated with anticoagulant therapy. 
-                    Close monitoring of the patient's condition and regular assessment for signs of bleeding are recommended.
+                patient.addNote("""
+                    Moderate Risk: The patient's bleeding risk according to the HAS-BLED score is moderate. There is a slightly increased risk of bleeding complications associated with anticoagulant therapy. Close monitoring of the patient's condition and regular assessment for signs of bleeding are recommended.
                     """);
             } else {
-                patient.addHasBledNote("""
-                    High Risk: The patient's bleeding risk according to the HAS-BLED score is high. 
+                patient.addNote("""
+                -   High Risk: The patient's bleeding risk according to the HAS-BLED score is high. 
                     There is a significant risk of bleeding complications associated with anticoagulant therapy. 
                     Consideration should be given to the patient's overall health status and the potential benefits 
                     of anticoagulation therapy weighed against the increased risk of bleeding.

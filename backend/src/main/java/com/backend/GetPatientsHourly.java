@@ -29,11 +29,13 @@ public class GetPatientsHourly {
          try {
             //ObjectMapper turns patients into a string that resembles json
             ObjectMapper objectMapper = new ObjectMapper();
-            //GetPatientsService controller = new GetPatientsService();
-            //HashMap<String, com.backend.Patient> recieved_patients = controller.getData();
+            GetPatientsService controller = new GetPatientsService();
+            HashMap<String, com.backend.Patient> recieved_patients = controller.getData();
 
 
-            HashMap<String, com.backend.Patient> recieved_patients = new HashMap<>();
+            // HashMap<String, com.backend.Patient> recieved_patients = new HashMap<>();
+            if(patients == null){
+
             Patient testPatient = new Patient("John Doe");
             testPatient.setPatientId("1");
             testPatient.setAge(76);
@@ -63,6 +65,9 @@ public class GetPatientsHourly {
             testPatient.conditions = new String[1];
 
             testPatient.conditions[0] = "Test";
+
+            }
+            
             patients = objectMapper.writeValueAsString(recieved_patients);
 
         } catch (IOException e) {
