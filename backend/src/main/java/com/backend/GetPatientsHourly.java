@@ -51,11 +51,6 @@ public class GetPatientsHourly {
             conditions[1] = "Renal Disease";
             conditions[2] = "Congestive Heart Failure";
             testPatient.setConditions(conditions);
-            testPatient.addChadsvascNote("""
-                High Risk: Patient presents a high risk of stroke. Multiple significant risk factors are present, 
-                necessitating strong consideration of anticoagulation therapy to reduce the risk of stroke. 
-                Close monitoring and management are essential to mitigate the risk of thromboembolic events.
-                """);
             
             recieved_patients.put("1", testPatient);
 
