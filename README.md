@@ -5,7 +5,7 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Release Notes
 
-## Version 0.5.0
+## Version 1.0
 
 ### Features
 * Added the Privacy Policy Page
