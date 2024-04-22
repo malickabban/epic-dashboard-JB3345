@@ -5,6 +5,19 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Release Notes
 
+## Version 1.0
+
+### Features
+* Added the Privacy Policy Page
+* Added functionality to the diagnoses section
+
+### Bug Fixes
+* The Help page is now visible from the sidebar
+
+### Known Issues
+* The diagnoses notes for some scores might not update across different patients
+
+
 ## Version 0.4.0
 
 ### Features

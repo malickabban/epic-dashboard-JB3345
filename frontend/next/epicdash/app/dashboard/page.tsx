@@ -7,11 +7,12 @@ import BasicInfo from "./components/BasicInfo"
 import {PatientContext, patientContextType} from '../PatientContext'
 import {Patient, PatientMap, clonePatient} from "../Types";
 import Scores from "./components/Scores"
+import Notes from "./components/Notes"
 
 const Dashboard: React.FC = () => {
   const { displayedPatients, selectedPatient, setDisplayedPatients,setSelectedPatient,
     conditionsActive, setConditionsActive, historyActive, setHistoryActive, observationsActive, setObservationsActive, 
-    basicActive, setBasicActive, bioActive, setBioActive, resetPatient} = useContext(PatientContext) as patientContextType
+    basicActive, setBasicActive, bioActive, setBioActive, resetPatient, notesActive, setNotesActive, scoresActive, setScoresActive} = useContext(PatientContext) as patientContextType
   const [data, setData] = useState<PatientMap | null>({});
   const [names, setNames] =  useState<PatientMap | null>(null); //For names of patients
 
@@ -156,16 +157,19 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-span-6 row-span-5">
+        <div className="col-span-6 row-span-9 flex flex-col">
           <BasicInfo basicActive={basicActive} setBasicActive={setBasicActive} bioActive={bioActive} selectedPatient={selectedPatient} setBioActive={setBioActive} historyActive={historyActive} setHistoryActive={setHistoryActive} 
           observationsActive={observationsActive} setObservationsActive={setObservationsActive} conditionsActive={conditionsActive} setConditionsActive={setConditionsActive}/>
+          <Notes notesActive={notesActive} setNotesActive={setNotesActive} selectedPatient={selectedPatient}/>
         </div>
-        <div className="row-span-3 col-span-1">
-          <Scores selectedPatient={selectedPatient}/>
+        <div className="row-span-5 col-span-1">
+          <Scores selectedPatient={selectedPatient} scoresActive={scoresActive} setScoresActive={setScoresActive}/>
         </div>
     </div>
   );
 };
+
+
 
 export default Dashboard;
 

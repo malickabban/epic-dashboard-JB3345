@@ -39,37 +39,13 @@ public class GetPatientsService {
     @GetMapping("/getPatients")
     public HashMap<String, com.backend.Patient> getData() throws IOException {
         Bundle randomPatientResponse = patientRandomSearch("2011-01-01", "Smith");
-        //Bundle samplePatientResponse = samplePatientSearch();
 
         HashMap<String, com.backend.Patient> randomPatients = processPatients(randomPatientResponse);
-        ///HashMap<String, com.backend.Patient> samplePatient = processPatients(samplePatientResponse);
-        //randomPatients.putAll(samplePatient);
         calculateChadsVasc(randomPatients);
         calculateHasBled(randomPatients);
         calculateRCRIScore(randomPatients);
         return randomPatients;
     }
-
-
-    //private Bundle samplePatientSearch(){
-
-    ////    Bundle bundle = new Bundle().setType(Bundle.BundleType.SEARCHSET);
-
-        
-    //    for (String samplePatientID : demoSamplePatientIDs) {
-    //        Bundle searchBundle = client.search()
-    //                .forResource(Patient.class)
-    //                .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(null, samplePatientID))
-    //                .returnBundle(Bundle.class)
-    //                .execute();
-    //        bundle.addEntry().setResource(searchBundle.getEntryFirstRep().getResource());
-    //    }
-    // System.out.println("\n CHECK OUT THIS BUNDLE: " + bundle.getEntry().get(0).getResource().toString());
-
-    // System.out.println("Okay we just got this guy " + " " + samplePatientID + "\n");
-
-    //return bundle;
-    //}
 
     //This is where patient api call will be handled
     private Bundle patientRandomSearch(String birthday, String practitionerName) {
@@ -81,6 +57,8 @@ public class GetPatientsService {
     }
 	//Creating the patient objects will go here. For each api call to get data (condition, encounter, etc) a new method is used	
     private HashMap<String, com.backend.Patient> processPatients(Bundle response) {
+        //Currently, only the first instance of a patient (based on name) is added. This is for display only, so only unique patients are displayed
+        //This should be changed in the future since each version of a patient amy have updated information
         HashSet<String> processedNames = new HashSet<>();
         HashMap<String, com.backend.Patient> patientsMap = new HashMap<>();
         int count = 0;
@@ -110,6 +88,7 @@ public class GetPatientsService {
                     addObservations(current_patient, newPatient);
                     addPractitioner(current_patient, newPatient);
                     addMedications(current_patient, newPatient);
+                    //System.out.println(newPatient.getDiagnosisNote());
                 
                     // Left because only 1 patient has medication, might want to test more in future
                     /*
@@ -119,10 +98,6 @@ public class GetPatientsService {
                         }
                     }
                     */
-                         // After all patient data is processed, evaluate RCRI values
-                    //evaluateRCRIValues(current_patient, newPatient); // This evaluates the RCRI criteria based on the patient's data
-
-                    // Then, calculate the RCRI score based on the evaluated criteria
                     processedNames.add(patientName);
                     patientsMap.put(newPatient.getPatientID(), newPatient);
                     count++;
@@ -174,8 +149,16 @@ public class GetPatientsService {
                 hasBledScore += 1;
                 //System.out.println("Drinker");
             }
-            System.out.println("HasBled: " + hasBledScore);
+            //System.out.println("HasBled: " + hasBledScore);
             patient.setHasBled(hasBledScore);
+            patient.addHasBledNote("The patient has a HasBled score of " + hasBledScore);
+            if (hasBledScore == 0) {
+                patient.addNote("HasBled Low Risk: The patient's bleeding risk according to the HAS-BLED score is low. Monitoring for bleeding events should still occur, but the risk is minimal. Consideration of anticoagulant therapy should be balanced with the potential risk of bleeding.");
+            } else if (hasBledScore == 1) {
+                patient.addNote("HasBled Moderate Risk: The patient's bleeding risk according to the HAS-BLED score is moderate. There is a slightly increased risk of bleeding complications associated with anticoagulant therapy. Close monitoring of the patient's condition and regular assessment for signs of bleeding are recommended.");
+            } else {
+                patient.addNote("HasBled High Risk: The patient's bleeding risk according to the HAS-BLED score is high. There is a significant risk of bleeding complications associated with anticoagulant therapy. Consideration should be given to the patient's overall health status and the potential benefits of anticoagulation therapy weighed against the increased risk of bleeding.");
+            }
         }
     }
 
@@ -187,36 +170,65 @@ public class GetPatientsService {
             //C
             if (patient.hasCHF()) {
                 chadsVascScore += 1;
+                //System.out.println("CHF");
             }
             ////H
             if (patient.hasHypertension()) {
                 chadsVascScore += 1;
+                //System.out.println("Hypertension");
             }
             //A
             if (patient.getAge() >= 75) {
                 chadsVascScore += 2;
+                //System.out.println("Age above 75");
             }
             //D
             if (patient.hasDiabetes()) {
                 chadsVascScore += 1;
+                //System.out.println("Diabetes");
             }
             //S
             if (patient.hasStroke()) {
                 chadsVascScore += 2;
+                //System.out.println("Stroke");
             }
             //V
             if (patient.hasVD()) {
                 chadsVascScore += 1;
+                //System.out.println("VD");
             }
             //A
             if (patient.getAge() >= 65 && patient.getAge() <= 74) {
                 chadsVascScore += 1;
+                //System.out.println("Age between 65 and 75");
             }
             //S
             if (patient.getGender().equalsIgnoreCase("female")) {
                 chadsVascScore += 1;
+                //System.out.println("Female");
             }
             patient.setChadsVasc(chadsVascScore);
+            patient.addChadsvascNote("The patient has a ChadsVasc Score of " + chadsVascScore);
+            if (chadsVascScore == 0) {
+                patient.addNote("CHADSVASc Low Risk: Patient has a low risk of stroke. No significant risk factors are present, and anticoagulation therapy may not be necessary unless other clinical indications arise.");
+            } else if (chadsVascScore == 1) {
+                patient.addNote("CHADSVASc Mild Risk: Patient has a slightly increased risk of stroke. One mild risk factor is present, warranting consideration of anticoagulation therapy based on individual clinical assessment.");
+            } else if (chadsVascScore == 2) {
+                patient.addNote("CHADSVASc Moderate Risk: Patient demonstrates a moderate risk of stroke. Multiple mild risk factors are present, or one significant risk factor is identified. Anticoagulation therapy should be considered based on individual risk assessment and guidelines.");
+            } else {
+                patient.addNote("CHADSVASc High Risk: Patient presents a high risk of stroke. Multiple significant risk factors are present, necessitating strong consideration of anticoagulation therapy to reduce the risk of stroke. Close monitoring and management are essential to mitigate the risk of thromboembolic events.");
+            }
+            // Print statements for checking criteria (if needed)
+            ////System.out.println("Patient ID: " + patient.getPatientID() + " - CHADSVASC Criteria:");
+            ////System.out.println("Has Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("Has Hypertension: " + patient.hasHypertension());
+            ////System.out.println("History of Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("Age: " + patient.getAge());
+            ////System.out.println("Diabetes: " + patient.hasDiabetes());
+            ////System.out.println("Has had a stroke or TIA: " + patient.hasStroke());
+            ////System.out.println("Has vascular disease: " + patient.hasVD());
+            ////System.out.println("Gender: " + patient.getGender());
+            ////System.out.println("Final CADSVASC Score: " + chadsVascScore);
         }
     }
 
@@ -243,15 +255,25 @@ public class GetPatientsService {
 
             // Set the calculated RCRI score for the patient
             patient.setRCRIScore(rcriScore);
+            patient.addRCRINote("The patient has a RCRI Score of " + rcriScore);
+            if (rcriScore == 0) {
+                patient.addNote("RCRI Low Risk: Patient exhibits a low risk of cardiac complications. No significant cardiac risk factors are identified, and cardiac monitoring may not be necessary unless other clinical indications arise.");
+            } else if (rcriScore == 1) {
+                patient.addNote("RCRI Mild Risk: Patient has a slightly increased risk of cardiac complications. One or more mild risk factors are present, warranting close monitoring during the perioperative period.");
+            } else if (rcriScore == 2) {
+                patient.addNote("RCRI Moderate Risk: Patient demonstrates a moderate risk of cardiac complications. Multiple mild risk factors are present, or one significant risk factor is identified. Consideration of cardiac evaluation and optimization prior to surgery is advised.");
+            } else {
+                patient.addNote("RCRI High Risk: Patient presents a high risk of cardiac complications. Multiple significant risk factors are present, necessitating strong consideration of cardiac evaluation, optimization, and consultation with a cardiologist prior to surgery. Enhanced perioperative monitoring and management are recommended to mitigate cardiac risks.");
+            }
 
             // Print statements for checking criteria (if needed)
-            ////System.out.println("Patient ID: " + newPatient.getPatientID() + " - RCRI Criteria:");
-            ////System.out.println("Undergoing High-risk Surgery: " + newPatient.isUndergoingHighRiskSurgery());
-            ////System.out.println("History of Ischemic Heart Disease: " + newPatient.isIschemicHeartDisease());
-            ////System.out.println("History of Congestive Heart Failure: " + newPatient.hasCHF());
-            ////System.out.println("History of Cerebrovascular Disease: " + newPatient.isCerebrovascularDisease());
-            ////System.out.println("Diabetes Mellitus on Insulin: " + newPatient.isOnPreOperativeInsulin());
-            ////System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + newPatient.isPreOperativeCreatinineAboveTwo());
+            ////System.out.println("Patient ID: " + patient.getPatientID() + " - RCRI Criteria:");
+            ////System.out.println("Undergoing High-risk Surgery: " + patient.isUndergoingHighRiskSurgery());
+            ////System.out.println("History of Ischemic Heart Disease: " + patient.isIschemicHeartDisease());
+            ////System.out.println("History of Congestive Heart Failure: " + patient.hasCHF());
+            ////System.out.println("History of Cerebrovascular Disease: " + patient.isCerebrovascularDisease());
+            ////System.out.println("Diabetes Mellitus on Insulin: " + patient.isOnPreOperativeInsulin());
+            ////System.out.println("Preoperative Serum Creatinine > 2.0 mg/dL: " + patient.isPreOperativeCreatinineAboveTwo());
             ////System.out.println("Final RCRI Score: " + rcriScore + "\n");
         }  
     }
@@ -263,19 +285,13 @@ public class GetPatientsService {
         for (Observation o : getResourcesForPatient(client, Observation.class, current_patient.getId())){
             observations.add(o.getCode().getText());
             getObservationValues(o,newPatient);
-            //For future testing
-            /*
-            if (o.hasValueQuantity()) {
-                System.out.println(o.getCode().getText());
-                System.out.println(o.getValueQuantity().getValue());
-            }
-             */
         }
         if (observations.size() != 0) {
             newPatient.setObservations((String[]) observations.toArray(new String[observations.size()])); 
         }
     }
 
+    //Method for adding encounters
     private void addEncounters(Patient current_patient, com.backend.Patient newPatient) { 
         ArrayList<String> encounterDetails = new ArrayList<>();
         for (Encounter e : getResourcesForPatient(client, Encounter.class, current_patient.getId())) {
@@ -323,6 +339,7 @@ public class GetPatientsService {
         }
     }
     
+    //Method for getting gender
     private void addGender(Patient current_patient, com.backend.Patient newPatient) {
         String sex = current_patient.getGenderElement().getValueAsString();
         if (sex != null && !sex.isEmpty()) {
@@ -332,7 +349,7 @@ public class GetPatientsService {
         }
     }
 
-
+    //Method for getting age
     private void addAge(Patient current_patient, com.backend.Patient newPatient) {
         LocalDate birthDate = current_patient.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate currentDate = LocalDate.now();
@@ -341,7 +358,7 @@ public class GetPatientsService {
         newPatient.setAge(years);
     }
     
-    
+    //Method for finding conditions
     private void addConditions(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> conditions = new ArrayList<String>();
         for (Condition c : getResourcesForPatient(client, Condition.class, current_patient.getId())){
@@ -354,6 +371,7 @@ public class GetPatientsService {
         }
     }
 
+    //Method for adding medication
     private void addMedications(Patient current_patient, com.backend.Patient newPatient) {
         ArrayList<String> medications = new ArrayList<String>();
         for (MedicationStatement c : getResourcesForPatient(client, MedicationStatement.class, current_patient.getId())){
@@ -366,6 +384,8 @@ public class GetPatientsService {
             newPatient.setMedications((String[]) medications.toArray(new String[medications.size()]));
         }
     }
+
+    //Method for setting the condition values that will be used for score calculation
     private void getConditionValues(Condition condition, com.backend.Patient newPatient) {
         if (condition.getCode().getCodingFirstRep().getDisplay() == null) {
             return;
@@ -419,6 +439,7 @@ public class GetPatientsService {
 
     }
 
+    //Method for getting medications
     private void getMedicationValues(String medication, com.backend.Patient newPatient) {
         if (medication == null) {
             return;
@@ -465,48 +486,6 @@ public class GetPatientsService {
             }
         }
     }
-    //private void evaluateRCRIValues(Patient current_patient, com.backend.Patient newPatient) {
-    //    // Conditions
-    //    List<Condition> conditions = getResourcesForPatient(client, Condition.class, current_patient.getId());
-    //    for (Condition condition : conditions) {
-    //        if (condition.getCode().hasCoding() && condition.getCode().getCodingFirstRep().hasDisplay()) {
-    //            String display = condition.getCode().getCodingFirstRep().getDisplay().toLowerCase();
-    //            
-    //            if (display.contains("ischemic heart disease") || display.contains("myocardial infarction")) {
-    //                newPatient.setIschemicHeartDisease(true);
-    //            }
-    //            if (display.contains("congestive heart failure")) {
-    //                newPatient.setCHF(true);
-    //            }
-    //            if (display.contains("cerebrovascular disease") || display.contains("stroke") || display.contains("transient ischemic attack")) {
-    //                newPatient.setCerebrovascularDisease(true);
-    //            }
-    //        }
-    //    }
-    //
-    //    // Medications for Diabetes on Insulin
-    //    List<MedicationStatement> medicationStatements = getResourcesForPatient(client, MedicationStatement.class, current_patient.getId());
-    //    for (MedicationStatement ms : medicationStatements) {
-    //        if (ms.getMedicationCodeableConcept().hasText() && ms.getMedicationCodeableConcept().getText().toLowerCase().contains("insulin")) {
-    //            newPatient.setOnPreOperativeInsulin(true);
-    //        }
-    //    }
-    //
-    //    // Observations for Creatinine
-    //    List<Observation> observations = getResourcesForPatient(client, Observation.class, current_patient.getId());
-    //    for (Observation observation : observations) {
-    //        if (observation.getCode().hasCoding()) {
-    //            for (Coding coding : observation.getCode().getCoding()) {
-    //                if (coding.hasDisplay() && coding.getDisplay().toLowerCase().contains("creatinine") && observation.hasValueQuantity()) {
-    //                    BigDecimal creatinineValue = observation.getValueQuantity().getValue();
-    //                    if (creatinineValue.compareTo(new BigDecimal("2.0")) > 0) {
-    //                        newPatient.setPreOperativeCreatinineAboveTwo(true);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     
 
     private void addPractitioner(Patient current_patient, com.backend.Patient newPatient) {

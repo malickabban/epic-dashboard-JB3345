@@ -6,6 +6,10 @@ export type Patient = {
     patientID: string;
     generalPractitioner: string | null;
     conditions : string[] | null;
+
+    chadsvascDiagnosisNote: string[] | null;
+    hasBledDiagnosisNote: string[] | null;
+    RCRIdiagnosisNote: string[] | null;
     observations : string[] | null;
     encounters : string[] | null;
     age: number | null;
@@ -29,15 +33,24 @@ export type Patient = {
     medicationBleeds : boolean | null;
     alcoholUse : boolean | null;
     hasBled : number | null;
+    diagnosisNote: string[] | null;
 };
 //Access each patient by patientID string
 export type PatientMap = Record<string, Patient>;
 //Function to clone each patient.
 export const clonePatient = (data : Patient) => {
+    let diagnoses = null
+    if (data && typeof data.diagnosisNote === "string") {
+        const str: string = data.diagnosisNote;
+        diagnoses = str.split("\n");
+    }
     const t:Patient = {
       name: data.name,
       deceased: data.deceased,
       generalPractitioner: data.generalPractitioner,
+      chadsvascDiagnosisNote: data.chadsvascDiagnosisNote,
+      RCRIdiagnosisNote: data.RCRIdiagnosisNote,
+      hasBledDiagnosisNote: data.hasBledDiagnosisNote,
       patientID: data.patientID,
       conditions: data.conditions,
       observations: data.observations,
@@ -62,7 +75,8 @@ export const clonePatient = (data : Patient) => {
       inr : 'inr' in data ? data.inr : null,
       medicationBleeds : 'medicationBleeds' in data ? data.medicationBleeds : null,
       alcoholUse : 'alcoholUse' in data ? data.alcoholUse : null,
-      hasBled : 'hasBled' in data ? data.hasBled : null
+      hasBled : 'hasBled' in data ? data.hasBled : null,
+      diagnosisNote : diagnoses ? diagnoses : data.diagnosisNote
     } 
     return t;
 }

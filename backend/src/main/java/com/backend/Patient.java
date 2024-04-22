@@ -7,9 +7,13 @@ public class Patient {
     public String patient_id;
     public boolean deceased;
     public String gender;
+    public String diagnosisNote = "";
+    public String hasBledDiagnosisNote = "";
+    public String chadsvascDiagnosisNote = "";
+    public String RCRIdiagnosisNote = "";
     public int chadsvasc;
     public int hasBled;
-    public int RCRI;
+    public int rcri;
     public boolean CHF;
     public boolean stroke;
     public boolean diabetes;
@@ -57,6 +61,18 @@ public class Patient {
     // Getter and setter for Pre-Operative Creatinine Above Two
     public boolean isPreOperativeCreatinineAboveTwo() {
         return preOperativeCreatinineAboveTwo;
+    }
+    public String getDiagnosisNote() {
+        return diagnosisNote;
+    }
+    public String getHasBledDiagnosisNote() {
+        return hasBledDiagnosisNote;
+    }
+    public String getChadvascDiagnosisNote() {
+        return chadsvascDiagnosisNote;
+    }
+    public String getRCRIDiagnosisNote() {
+        return RCRIdiagnosisNote;
     }
     public boolean hasCHF() {
         return CHF;
@@ -164,7 +180,20 @@ public class Patient {
     public void setGender(String gender) {
         this.gender = gender;
     }
-
+    public void addNote(String note) {
+        diagnosisNote = diagnosisNote.concat(note);
+        diagnosisNote = diagnosisNote.concat("\n");
+    }
+    public void addRCRINote(String note) {
+        RCRIdiagnosisNote = RCRIdiagnosisNote.concat(note);
+        RCRIdiagnosisNote = RCRIdiagnosisNote.concat("\n");
+    }    public void addChadsvascNote(String note) {
+        chadsvascDiagnosisNote = chadsvascDiagnosisNote.concat(note);
+        chadsvascDiagnosisNote = chadsvascDiagnosisNote.concat("\n");
+    }    public void addHasBledNote(String note) {
+        hasBledDiagnosisNote = hasBledDiagnosisNote.concat(note);
+        hasBledDiagnosisNote = hasBledDiagnosisNote.concat("\n");
+    }
     public void setCHF(boolean CHF) {
         this.CHF = CHF;
     }
@@ -202,7 +231,7 @@ public class Patient {
     public void setHasBled(int hasBled) {this.hasBled = hasBled;}
     
     public void setRCRIScore(int RCRI) {
-        this.RCRI = RCRI;
+        this.rcri = RCRI;
     }
 
     public void setIschemicHeartDisease(boolean ischemicHeartDisease) {

@@ -8,6 +8,7 @@ import {
     MdHelpCenter,
     MdLogout,
     MdHistory,
+    MdOutlinePrivacyTip
   } from "react-icons/md";
 import Menu from "./Menu";
 
@@ -33,11 +34,14 @@ const menuItems = [
     {
       title: "User",
       list: [
+      
         {
-          title: "Settings",
-          path: "/dashboard/settings",
-          icon: <MdOutlineSettings />,
+          title: "Privacy Policy",
+          path: "/dashboard/privacypolicy",
+          icon: <MdOutlinePrivacyTip
+          />,
         },
+
         {
           title: "Help",
           path: "/dashboard/help",

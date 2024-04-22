@@ -24,7 +24,7 @@ const PatientScore = () => {
   const [current, setCurrent] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
   elements : [selectedPatient ? chadsvascAge(selectedPatient) : 0, selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
-    selectedPatient && selectedPatient.gender === 'male' ? 0 : 1, selectedPatient && selectedPatient.stroke ? 2 : 0, selectedPatient && selectedPatient.VD ? 1 : 0,
+    selectedPatient && selectedPatient.gender === 'female' ? 1 : 0, selectedPatient && selectedPatient.stroke ? 2 : 0, selectedPatient && selectedPatient.VD ? 1 : 0,
     selectedPatient && selectedPatient.diabetes ? 1 : 0, selectedPatient && selectedPatient.chadsvasc ? selectedPatient.chadsvasc : 0]},
    "RCRI" : {name : "RCRI", score : selectedPatient ? selectedPatient.rcri : 0, 
    fields : ["CVD", "IHD", "Elevated Surgery Risk", "CHF", "Pre-operative Insulin", "Pre-operative Creatinine", "Score"], 
@@ -42,7 +42,7 @@ const PatientScore = () => {
   const [names, setNames] = useState<scoreMap>({"CHA2DS2-VASc" : {name : "CHA2DS2-VASc", score : selectedPatient ? selectedPatient.chadsvasc : 0, 
   fields : ["Age", "CHF","Hypertension","Gender", "Stroke", "VD","Diabetes","Score"], 
   elements : [selectedPatient ? chadsvascAge(selectedPatient) : 0, selectedPatient && selectedPatient.CHF ? 1 : 0, selectedPatient && selectedPatient.hypertension ? 1 : 0, 
-    selectedPatient && selectedPatient.gender === 'male' ? 0 : 1, selectedPatient && selectedPatient.stroke ? 2 : 0, selectedPatient && selectedPatient.VD ? 1 : 0,
+    selectedPatient && selectedPatient.gender === 'female' ? 1 : 0, selectedPatient && selectedPatient.stroke ? 2 : 0, selectedPatient && selectedPatient.VD ? 1 : 0,
     selectedPatient && selectedPatient.diabetes ? 1 : 0, selectedPatient && selectedPatient.chadsvasc ? selectedPatient.chadsvasc : 0]},
    "RCRI" : {name : "RCRI", score : selectedPatient ? selectedPatient.rcri : 0, 
    fields : ["CVD", "IHD", "Elevated Surgery Risk", "CHF", "Pre-operative Insulin", "Pre-operative Creatinine", "Score"], 
@@ -113,7 +113,7 @@ const PatientScore = () => {
       <div className={styles.top}>
         <SearchBar placeholder="Search Patient Score..." onSearch={onSearch} current={current}/>
         <button className={styles.addButton} onClick={onAdd}>Add</button>
-        <button className={styles.addButton} onClick={handleDelete}>Delete</button>
+        <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
       </div>
       {scores && Object.keys(scores).map((key) => (
         <table className={styles.table}>
