@@ -17,6 +17,7 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ### Known Issues
 * The diagnoses notes for some scores might not update across different patients
 
+
 ## Version 0.4.0
 
 ### Features
