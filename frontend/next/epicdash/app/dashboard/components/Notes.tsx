@@ -39,7 +39,7 @@ const Notes = (input: notesInput) => {
         }
       }
       useEffect(() => {
-        if (selectedPatient && !originalDiagnoses) {
+        if (selectedPatient) {
           setOriginalDiagnoses(selectedPatient.diagnosisNote);
         }
       }, [selectedPatient]);
