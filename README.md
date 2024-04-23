@@ -5,7 +5,7 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Install Guide
 
-# How do I run this project?
+## How do I run this project?
 Once you have the project downloaded make sure you install all relevant dependencies (Next.js, node.js, Boostrap/Popper, Springboot).
 Navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend.
 Then to start the backend, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method, or alternatively run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead.
