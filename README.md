@@ -3,19 +3,32 @@
 
 The goal of this project is to create an easy to use, dynamic, and adapative dashboard for doctors that will allow them to better treat their patients by offering easy information retrieval and automating score calculation and notes writing.
 
+# Install Guide
+
+# How do I run this project?
+Once you have the project downloaded make sure you install all relevant dependencies (Next.js, node.js, Boostrap/Popper, Springboot).
+Navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend.
+Then to start the backend, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method, or alternatively run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead.
+
+For the sign-in page, the username is "TestDoctor" and the password is "TestPassword".
+
 # Release Notes
 
 ## Version 1.0
 
 ### Features
-* Added the Privacy Policy Page
-* Added functionality to the diagnoses section
+* Added the patient bio data section (containing basic data, observations, conditions, and history)
+* Added the score calculation section and score breakdown page
+* Added the diagnostic notes section
+* Completed the nav bar with Help and Privacy Policy pages
 
 ### Bug Fixes
 * The Help page is now visible from the sidebar
+* Score calculation for CHADS2VASc has been corrected
+* Diagnosis notes now update across different patients
 
 ### Known Issues
-* The diagnoses notes for some scores might not update across different patients
+* The delete button on the score calculation page does not work across scores, only the one currently searched for
 
 
 ## Version 0.4.0
@@ -81,28 +94,5 @@ We chose Next.js because of its support of server side rendering aswell as easy 
 
 We chose Springboot because it is the best choice for developing your backend in Java given its easy of use and minimal boilerplate/setup.
 
-# Milestones
-
-## Milestone 1: Initial Project Setup and MMF 1
-### 11-26-2023
-**Milestone Rationale:**
-We decided that our best bet for Milestone 1 would be to do as much foundational work as possible in addition to delivering on MMF 1. This included setting up:
-1. A sign-in page
-2. A dashboard frontend that showed a list of patients along with basic relevant information on them
-3. A fully fleshed out backend that could parse json files and pass relevant information to the frontend
-   
-After setting that up we moved on to implimenting MMF 1, which would allow users to modify the patient list. This meant:
-1. Users can remove patients they no longer wish to see, but can add those patients back at any time
-2. Users can add patients that were not already visible
-3. Caching patient data on the frontend so that new requests do not need to be send to the backend to retrieve patient information
-   
-This was all done by essentially having one "master" list of patients, and one "display" list of patients. Users can directly modify the display list to show who they want, and can always add back patients from the "master" list.
-
-# How do I run this project?
-Once you have the project downloaded make sure you install all relevant dependencies (Next.js, node.js, Boostrap/Popper, Springboot).
-Navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend.
-Then to start the backend, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method, or alternatively run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead.
-
-For the sign-in page, the username is "TestDoctor" and the password is "TestPassword".
 
 
