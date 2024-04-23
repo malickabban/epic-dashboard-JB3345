@@ -5,6 +5,8 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Install Guide
 
+* For the sign-in page, the username is "TestDoctor" and the password is "TestPassword"
+
 ### Pre-requisites
 * There are no hardware requirements for running this project
 * The backend for this application is written using Java, so to run the application locally Java must be configured on the machine
@@ -18,7 +20,6 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 * This project is intended to run within the Epic system using SMART. 
 ### Troubleshooting
 
-For the sign-in page, the username is "TestDoctor" and the password is "TestPassword".
 
 # Release Notes
 
