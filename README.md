@@ -6,15 +6,17 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 # Install Guide
 
 ### Pre-requisites
+* There are no hardware requirements for running this project
+* The backend for this application is written using Java, so to run the application locally Java must be configured on the machine
 ### Dependencies
+* Dependencies for this project include Springboot for the backend and Next.js, node.js, and Boostrap/Popper for the frontend
 ### Download Instructions
+* This project can be downloaded directly from this repository, either by cloning it locally or downlaoding the zip file
 ### Run Instructions
+* After all dependencies are installed, navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend. Then, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method to start the backend. Alternatively to run the backend, run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead
 ### Build Instructions and Installation
+* This project is intended to run within the Epic system using SMART. 
 ### Troubleshooting
-
-Once you have the project downloaded make sure you install all relevant dependencies (Next.js, node.js, Boostrap/Popper, Springboot).
-Navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend.
-Then to start the backend, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method, or alternatively run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead.
 
 For the sign-in page, the username is "TestDoctor" and the password is "TestPassword".
 
