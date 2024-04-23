@@ -15,6 +15,8 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ### Download Instructions
 * This project can be downloaded directly from this repository, either by cloning it locally or downlaoding the zip file
 ### Run Instructions
+* If you cloned the project, open it directly
+* If you download a zip, upack the zip and open the project
 * After all dependencies are installed, navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend. Then, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method to start the backend. Alternatively to run the backend, run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead
 ### Build Instructions and Installation
 * This project is intended to run within the Epic system using SMART. 
