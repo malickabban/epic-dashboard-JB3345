@@ -13,15 +13,21 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 ### Dependencies
 * Dependencies for this project include Springboot for the backend and Next.js, node.js, and Boostrap/Popper for the frontend
 ### Download Instructions
-* This project can be downloaded directly from this repository, either by cloning it locally or downlaoding the zip file
+* This project can be downloaded directly from this repository, either by cloning it locally or downloading the zip file
+### Build Instructions and Installation
+* This project is intended to run within the Epic system using SMART.
+
+Installation: 
+* Make sure you have Node.js on your device (https://nodejs.org/en/download).
+* Navigate to 'frontend\next\epicdash' folder and run 'npm install' to install all necessary packages you need.
 ### Run Instructions
 * If you cloned the project, open it directly
 * If you download a zip, upack the zip and open the project
 * After all dependencies are installed, navigate to 'frontend\next\epicdash' and run 'npm run dev' to start the frontend. Then, navigate to 'backend\src\main\java\com\JD3345\backend\BackendApplication.java' and run the main method to start the backend. Alternatively to run the backend, run the jar (backend-0.0.1-SNAPSHOT.jar) in the repo instead
-### Build Instructions and Installation
-* This project is intended to run within the Epic system using SMART. 
 ### Troubleshooting
-
+A common error when installing:
+* You're not in the right folder. Make sure to properly navigate to 'frontend\next\epicdash'.
+* Open the folder in this order: epic-dashboard > frontend > next > epicdash
 
 # Release Notes
 
