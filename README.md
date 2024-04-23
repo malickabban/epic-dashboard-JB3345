@@ -5,6 +5,8 @@ The goal of this project is to create an easy to use, dynamic, and adapative das
 
 # Install Guide
 
+* If you have any trouble with the following, feel free to contact our team
+
 * For the sign-in page, the username is "TestDoctor" and the password is "TestPassword"
 
 ### Pre-requisites
